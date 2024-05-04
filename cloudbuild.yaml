@@ -1,0 +1,59 @@
+steps:
+  # Let Git recognize "/workspace" as a safe directory, otherwise it would throw the following error
+  # Error: failed to get git context: exit status 128
+  # -- git output --
+  # fatal: detected dubious ownership in repository at '/workspace'
+  # To add an exception for this directory, call:
+  # git config --global --add safe.directory /workspace
+  - name: 'gcr.io/cloud-builders/git'
+    entrypoint: 'bash'
+    args: ['-c', 'git config --global --add safe.directory /workspace']
+    id: 'Configure Git'
+
+  # Authenticate the service account with GCP to have access to the Artifact Registry to download private packages
+  - name: 'node:lts'
+    waitFor: ['Configure Git']
+    entrypoint: npx
+    args: ['google-artifactregistry-auth']
+    id: 'Authenticate'
+
+  - name: 'node:lts'
+    waitFor: ['Authenticate']
+    entrypoint: npm
+    args: ['install']
+    id: 'Install'
+
+  - name: 'node:lts'
+    waitFor: ['Install']
+    entrypoint: npm
+    args: ['run', 'build']
+    id: 'Build'
+
+  # Scan the application on CWE's
+  - name: 'bearer/bearer'
+    waitFor: ['Install']
+    entrypoint: bearer
+    args: ['scan', '.']
+    id: 'Scan'
+
+  # Download the Firebase tool package in a container
+  - name: 'gcr.io/cloud-builders/wget'
+    waitFor: ['Install']
+    args:
+      - '--quiet'
+      - '-O'
+      - 'firebase'
+      - 'https://firebase.tools/bin/linux/latest'
+    id: 'Download Firebase'
+
+  # Change the rights to the tool through chmod & deploy the project with Firebase
+  - name: 'debian:11'
+    waitFor: ['Download Firebase', 'Scan', 'Build']
+    args:
+      - 'bash'
+      - '-c'
+      - |
+        mv firebase /tmp
+        chmod 755 /tmp/firebase
+        /tmp/firebase deploy --project ${PROJECT_ID} --non-interactive -m "Build ${BUILD_ID}" --debug
+    id: 'Deploy to Firebase'

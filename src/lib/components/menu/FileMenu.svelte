@@ -1,0 +1,146 @@
+<script lang="ts">
+  import { goto } from '$app/navigation'
+  import { base } from '$app/paths'
+  import { createEventDispatcher } from 'svelte'
+  import { user } from '$lib/stores/store'
+  import type { PageEvents, IFileInformation } from '$lib/interfaces/Types'
+  import Database from '$lib/helpers/Database'
+  import { logWhenDev } from '@radar-azdelta-int/radar-utils'
+  import { Confirm, SvgIcon } from '@radar-azdelta-int/radar-svelte-components'
+
+  export let files: IFileInformation[]
+
+  const dispatch = createEventDispatcher<PageEvents>()
+  let confirmDialog: HTMLDialogElement
+  let fileToDelete = { id: '', name: '' }
+
+  $: userIsUser = $user?.roles?.includes('user')
+  $: userIsAdmin = $user?.roles?.includes('admin')
+
+  async function openMappingTool(fileId: string, domain: string | null): Promise<void> {
+    logWhenDev('openMappingTool: Navigating to the mapping tool')
+    const cached = await Database.checkFileExistance(fileId)
+    if (!cached) return
+    let url = `${base}/mapping?id=${fileId}`
+    if (domain) url += `&domain=${domain}`
+    goto(url)
+  }
+
+  async function downloadFiles(id: string): Promise<void> {
+    if (!id) return
+    await Database.downloadFiles(id)
+    dispatch('getFiles')
+  }
+
+  async function deleteFiles(e: CustomEvent): Promise<void> {
+    const { id } = e.detail
+    dispatch('processing', { processing: true })
+    if (id) await Database.deleteKeunFile(id)
+    dispatch('getFiles')
+    dispatch('processing', { processing: false })
+  }
+
+  async function confirmFileDeletion(file: IFileInformation) {
+    const { id, name } = file
+    fileToDelete = { id, name }
+    confirmDialog.showModal()
+  }
+</script>
+
+<Confirm
+  bind:dialog={confirmDialog}
+  title={fileToDelete.name}
+  approveDispatch="delete"
+  props={{ id: fileToDelete.id }}
+  on:delete={deleteFiles}
+/>
+
+{#if $user && (userIsUser || userIsAdmin)}
+  {#each files as file}
+    <button class="file-card" on:click={() => openMappingTool(file.id, file.domain)}>
+      <div class="file-name-container">
+        <SvgIcon id="excel" width="40px" height="40px" />
+        <p class="file-name">{file?.name}</p>
+        <p class="file-domain">Domain: {file.domain ?? 'none'}</p>
+      </div>
+      {#if userIsAdmin}
+        <div>
+          <button class="download-file" on:click|stopPropagation={() => downloadFiles(file.id)}>
+            <SvgIcon id="download" />
+          </button>
+          <button class="delete-file" on:click|stopPropagation={() => confirmFileDeletion(file)}>
+            <SvgIcon id="x" />
+          </button>
+        </div>
+      {/if}
+    </button>
+  {/each}
+{:else}
+  <p class="rights-error">You do not have sufficient rights, contact an admin please.</p>
+{/if}
+
+<style>
+  .file-card {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    border: none;
+    background-color: inherit;
+  }
+
+  .file-card:hover,
+  .file-card:focus {
+    background-color: lightgray;
+  }
+
+  .file-name-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .file-name {
+    font-size: 1rem;
+  }
+
+  .file-domain {
+    margin-left: 2rem;
+  }
+
+  .delete-file {
+    border: none;
+    background-color: inherit;
+  }
+
+  .delete-file:hover {
+    background-color: #ff7f7f;
+  }
+
+  .delete-file:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #e67f7f;
+    background-color: #ff7f7f;
+  }
+
+  .download-file {
+    border: none;
+    background-color: inherit;
+  }
+
+  .download-file:hover {
+    background-color: #80c3d8;
+  }
+
+  .download-file:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #71bbd4;
+    background-color: #80c3d8;
+  }
+
+  .rights-error {
+    text-align: center;
+    margin: 0 0 1rem 0;
+  }
+</style>
