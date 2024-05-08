@@ -239,7 +239,7 @@ export default class Database {
   static async getFilesList() {
     const fileIds = await this.getFilesFromFirestore()
     const fileNames = []
-    for (let fileId of fileIds) {
+    for (const fileId of fileIds) {
       const fileInfo = await this.getFileNameFromStorage(fileId)
       if (fileInfo)
         fileNames.push({

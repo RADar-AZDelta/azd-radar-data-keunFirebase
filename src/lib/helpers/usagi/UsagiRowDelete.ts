@@ -93,7 +93,7 @@ export default class UsagiRowDelete {
   private static async updateRowsWithSameSourceCode() {
     const indices = await this.getConceptsIndices()
     const rowsToUpdate = new Map()
-    for (let i of indices) rowsToUpdate.set(i, { 'ADD_INFO:numberOfConcepts': indices.length })
+    for (const i of indices) rowsToUpdate.set(i, { 'ADD_INFO:numberOfConcepts': indices.length })
     await Table.updateTableRows(rowsToUpdate)
   }
 

@@ -25,7 +25,7 @@ export default class CommonMapping {
   }
 
   static async rowMapping(index?: number, numberOfConcepts: number = 1) {
-    let rowIndex: number = index !== undefined ? index : this.usagiRowIndex!
+    const rowIndex: number = index !== undefined ? index : this.usagiRowIndex!
     const mappedUsagiRow = await Table.getTableRow(rowIndex)
     const mappedProperties = await this.assembleAthenaInfo()
     const extraProps = await this.assembleExtraInfoSingleMapping(numberOfConcepts)

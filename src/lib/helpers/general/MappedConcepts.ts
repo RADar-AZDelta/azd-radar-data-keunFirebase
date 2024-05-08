@@ -29,7 +29,7 @@ export default class MappedConcepts {
     updatedConcepts: IMappedRows,
     multipleMapping: boolean,
   ) {
-    for (let [sourceCode, conceptIds] of Object.entries(updatedConcepts))
+    for (const [sourceCode, conceptIds] of Object.entries(updatedConcepts))
       currentConcepts = this.addMappedConceptToBib(currentConcepts, sourceCode, conceptIds, multipleMapping)
     return currentConcepts
   }
@@ -48,7 +48,7 @@ export default class MappedConcepts {
       currentConcepts[sourceCode] = concepts
       return currentConcepts
     }
-    for (let [conceptId, mappingStatus] of Object.entries(concepts))
+    for (const [conceptId, mappingStatus] of Object.entries(concepts))
       currentConcepts[sourceCode][conceptId] = mappingStatus
     return currentConcepts
   }

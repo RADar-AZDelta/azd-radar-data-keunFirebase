@@ -95,7 +95,7 @@ export default class MultipleMapping extends CommonMapping {
   private static async updateNumberOfConcepts(mapped: IQueryResult) {
     const numberOfConcepts = mapped.indices.length + 1
     const rowsToUpdate = new Map()
-    for (let rowIndex of mapped.indices) rowsToUpdate.set(rowIndex, { 'ADD_INFO:numberOfConcepts': numberOfConcepts })
+    for (const rowIndex of mapped.indices) rowsToUpdate.set(rowIndex, { 'ADD_INFO:numberOfConcepts': numberOfConcepts })
     await Table.updateTableRows(rowsToUpdate)
   }
 
