@@ -1,15 +1,14 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte'
   import { query } from 'arquero'
   import ShowColumnsDialog from '$lib/components/mapping/ShowColumnsDialog.svelte'
   import Table from '$lib/helpers/tables/Table'
   import type Query from 'arquero/dist/types/query/query'
-  import type { IQueryResult, IUsagiRow, MappingEvents, ShowColumnsED } from '$lib/interfaces/Types'
-  import { SvgIcon } from '@radar-azdelta-int/radar-svelte-components'
+  import type { IQueryResult, IUsagiRow, ShowColumnsED } from '$lib/interfaces/Types'
+  import Icon from '../extra/Icon.svelte'
+  import type { ISearchHeadProps } from '$lib/interfaces/NewTypes'
 
-  export let selectedRow: IUsagiRow
+  let { selectedRow, navigateRow }: ISearchHeadProps = $props()
 
-  const dispatch = createEventDispatcher<MappingEvents>()
   let dialog: HTMLDialogElement
   let shownColumns: string[] = ['sourceCode', 'sourceName', 'sourceFrequency']
 
@@ -48,22 +47,24 @@
     if (!row.sourceCode) return
     const currentPage = await getPagination()
     if (currentPage !== page) Table.changePagination(page)
-    dispatch('navigateRow', { row, index })
+    navigateRow(row, index)
   }
 
   const showDialogColumns = () => dialog.showModal()
 
-  const showColumns = (e: CustomEvent<ShowColumnsED>) => ({ columns: shownColumns } = e.detail)
+  async function showColumns(columns: string[]) {
+    shownColumns = columns
+  }
 
   $: columns = selectedRow ? Object.keys(selectedRow) : []
 </script>
 
-<ShowColumnsDialog bind:dialog {columns} {shownColumns} on:showColumns={showColumns} />
+<ShowColumnsDialog bind:dialog {columns} {shownColumns} {showColumns} />
 
 <div class="table-head">
   <div class="currentRow">
     <button class="arrow-button" title="Previous row" id="left" on:click={() => navigateRows(false)}>
-      <SvgIcon id="arrow-left" width="24px" height="24px" />
+      <Icon id="arrow-left" width="24px" height="24px" />
     </button>
     <div class="center">
       <table class="table">
@@ -80,10 +81,10 @@
           {/if}
         </tr>
       </table>
-      <button class="settings" on:click={showDialogColumns}><SvgIcon id="settings" /></button>
+      <button class="settings" on:click={showDialogColumns}><Icon id="settings" /></button>
     </div>
     <button class="arrow-button" title="Next row" id="right" on:click={() => navigateRows(true)}>
-      <SvgIcon id="arrow-right" width="24px" height="24px" />
+      <Icon id="arrow-right" width="24px" height="24px" />
     </button>
   </div>
 </div>

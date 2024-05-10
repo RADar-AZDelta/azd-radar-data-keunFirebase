@@ -1,15 +1,16 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte'
-  import type { MappingEvents } from '$lib/interfaces/Types'
   import Config from '$lib/helpers/Config'
+  import type { IEquivalenceProps } from '$lib/interfaces/NewTypes'
 
-  const dispatch = createEventDispatcher<MappingEvents>()
-
-  const equivalenceChange = (e: Event) => dispatch('equivalenceChange', { equivalence: (<any>e.target).value })
+  let { equivalenceUpdate }: IEquivalenceProps = $props()
+  const change = (e: any) => {
+    const value = e.target.value
+    equivalenceUpdate(value)
+  }
 </script>
 
 <div class="equivalence">
-  <select title="Equivalence" name="equivalence" id="equivalence" on:change={equivalenceChange}>
+  <select title="Equivalence" name="equivalence" id="equivalence" onchange={change}>
     {#each Config.equivalenceOptions as option, _}
       <option value={option}>{option}</option>
     {/each}

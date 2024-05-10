@@ -1,26 +1,23 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte'
   import debounce from 'lodash.debounce'
-  import { clickOutside } from '@radar-azdelta-int/radar-svelte-components'
-  import type { ICustomEvents } from '$lib/interfaces/Types'
+  // import { clickOutside } from '@radar-azdelta-int/radar-svelte-components'
+  import clickOutside from '$lib/obsolete/clickOutside'
+  import type { IAutoCompleteInputProps } from '$lib/interfaces/NewTypes'
 
-  export let id: string, list: string[]
-  export let inputValue: string | null = null
+  let { id, list, inputValue = $bindable(null), autoComplete }: IAutoCompleteInputProps = $props()
 
-  let value: string, key: string
-
-  let filteredValues: string[] = []
-  let autoCompleted: boolean = false
-  let focus: boolean = false
-  let suggestionsFocus: boolean = false
-
-  const dispatch = createEventDispatcher<ICustomEvents>()
+  let value: string = $state('')
+  let key: string = $state('')
+  let filteredValues: string[] = $state([])
+  let autoCompleted: boolean = $state(false)
+  let focus: boolean = $state(false)
+  let suggestionsFocus: boolean = $state(false)
 
   function save(): void {
     if (!inputValue) return
     value = inputValue
     if (!list.includes(value)) return
-    dispatch('autoComplete', { id, value, key })
+    autoComplete(id, value)
   }
 
   function onClickAutoComplete(e: Event): void {
@@ -31,7 +28,7 @@
   }
 
   // A method to search for suggestions to apply to the input field
-  function filter(): void {
+  function filter(inputValue: string | null): void {
     filteredValues = []
     if (!inputValue) return
     const pairs = list.filter(findPossibleSuggestions)
@@ -56,20 +53,19 @@
   const nonFocussing = () => (focus = false)
   const outClick = () => (suggestionsFocus = false)
 
-  $: {
-    inputValue
-    filter()
-  }
+  $effect(() => {
+    filter(inputValue)
+  })
 </script>
 
 <div class="input-container">
-  <input title={id} bind:value={inputValue} on:input={onInput} on:focus={focussing} on:focusout={nonFocussing} />
+  <input title={id} bind:value={inputValue} oninput={onInput} onfocus={focussing} onfocusout={nonFocussing} />
   {#if filteredValues.length && (focus || suggestionsFocus)}
-    <ul use:clickOutside on:outClick={outClick}>
+    <ul use:clickOutside onoutClick={outClick}>
       {#each filteredValues as suggestion, i}
         {#if i < 7 && !autoCompleted}
-          <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-          <li id={suggestion} on:click={onClickAutoComplete} on:keydown={onClickAutoComplete}>{suggestion}</li>
+          <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+          <li id={suggestion} onclick={onClickAutoComplete} onkeydown={onClickAutoComplete}>{suggestion}</li>
         {/if}
       {/each}
     </ul>

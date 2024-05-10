@@ -32,6 +32,7 @@ export default defineConfig({
       '@radar-azdelta/svelte-datatable',
       '@browsermt/bergamot-translator',
       '@radar-azdelta/svelte-athena-search',
+      // '@radar-azdelta-int/radar-svelte-components'
     ],
   },
 })

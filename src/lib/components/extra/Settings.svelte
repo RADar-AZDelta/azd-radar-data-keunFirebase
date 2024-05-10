@@ -2,28 +2,35 @@
   import Switch from '$lib/components/extra/Switch.svelte'
   import Config from '$lib/helpers/Config'
   import Settings from '$lib/helpers/Settings'
-  import { abortAutoMapping, settings, triggerAutoMapping } from '$lib/stores/store'
-  import { SvgIcon, clickOutside } from '@radar-azdelta-int/radar-svelte-components'
+  import clickOutside from '$lib/obsolete/clickOutside'
+  import Icon from './Icon.svelte'
+  import { rune } from '$lib/stores/runes.svelte'
+  import type { ISettings } from '$lib/interfaces/Types'
 
-  let savedAutomapping: boolean, possibleOutclick: boolean, settingsDialog: HTMLDialogElement
+  let settings: { value: ISettings } = rune('settings')
+  let abortAutoMapping: { value: boolean } = rune('abortAutoMapping')
+  let triggerAutoMapping: { value: boolean } = rune('triggerAutoMapping')
+  let savedAutomapping: boolean = $state(false)
+  let possibleOutclick: boolean = $state(false)
+  let settingsDialog: HTMLDialogElement | undefined = $state(undefined)
 
-  const closeDialog = () => settingsDialog.close()
+  const closeDialog = () => settingsDialog?.close()
 
   async function openDialog() {
-    savedAutomapping = $settings.autoMap
-    settingsDialog.showModal()
+    savedAutomapping = settings.value.autoMap
+    settingsDialog?.showModal()
     possibleOutclick = true
   }
 
   async function saveSettings() {
-    await Settings.updateSettings($settings)
-    const automappingChanged = $settings.autoMap && savedAutomapping !== $settings.autoMap
-    savedAutomapping = $settings.autoMap
-    if (automappingChanged) $triggerAutoMapping = savedAutomapping = true
+    await Settings.updateSettings(settings.value)
+    const automappingChanged = settings.value.autoMap && savedAutomapping !== settings.value.autoMap
+    savedAutomapping = settings.value.autoMap
+    if (automappingChanged) triggerAutoMapping.value = savedAutomapping = true
   }
 
   async function abort() {
-    if (!$settings.autoMap && savedAutomapping !== $settings.autoMap) $abortAutoMapping = true
+    if (!settings.value.autoMap && savedAutomapping !== settings.value.autoMap) abortAutoMapping.value = true
   }
 
   async function outClick() {
@@ -39,34 +46,34 @@
     saveSettings()
   }
 
-  $: {
-    $settings.autoMap
+  $effect(() => {
+    settings.value.autoMap
     changeAutoMapping()
-  }
+  })
 </script>
 
-<button title="Settings-Keun" on:click={openDialog} class="header-button"><SvgIcon id="settings" /></button>
+<button title="Settings-Keun" onclick={openDialog} class="header-button"><Icon id="settings" /></button>
 
 <dialog bind:this={settingsDialog} class="settings-dialog">
-  <div class="settings-container" use:clickOutside on:outClick={outClick}>
+  <div class="settings-container" use:clickOutside onoutClick={outClick}>
     {#if settings}
-      <button class="close-dialog" on:click={outClick}><SvgIcon id="x" /></button>
+      <button class="close-dialog" onclick={outClick}><Icon id="x" /></button>
       <section class="settings">
         <h2 class="title">Settings</h2>
         <div class="options">
-          <Switch name="Map to multiple concepts?" bind:checked={$settings.mapToMultipleConcepts} />
-          <Switch name="Automatic mapping?" bind:checked={$settings.autoMap} />
+          <Switch name="Map to multiple concepts?" bind:checked={settings.value.mapToMultipleConcepts} />
+          <Switch name="Automatic mapping?" bind:checked={settings.value.autoMap} />
           <div class="option">
             <p>Language of source CSV</p>
-            <select name="language" id="language" bind:value={$settings.language}>
+            <select name="language" id="language" bind:value={settings.value.language}>
               {#each Object.keys(Config.languages) as lang, _}
-                <option value={lang} selected={lang === $settings.language}>{Config.languages[lang]}</option>
+                <option value={lang} selected={lang === settings.value.language}>{Config.languages[lang]}</option>
               {/each}
             </select>
           </div>
           <div class="option">
             <p>Default vocabulary ID for custom concepts</p>
-            <input type="text" placeholder="local ID e.g. AZDELTA" bind:value={$settings.vocabularyIdCustomConcept} />
+            <input type="text" placeholder="local ID e.g. AZDELTA" bind:value={settings.value.vocabularyIdCustomConcept} />
           </div>
         </div>
       </section>

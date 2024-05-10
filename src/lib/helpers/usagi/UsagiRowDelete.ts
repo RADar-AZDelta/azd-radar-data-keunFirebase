@@ -40,10 +40,7 @@ export default class UsagiRowDelete {
     const indexQuery = (<Query>query().params(params))
       .filter(
         (r: any, p: any) =>
-          r.concept_name === p.concept_name &&
-          r.domain_id === p.domain_id &&
-          r.vocabulary_id === p.vocabulary_id &&
-          r.concept_class_id === p.concept_class_id,
+          r.concept_name === p.concept_name && r.domain_id === p.domain_id && r.vocabulary_id === p.vocabulary_id && r.concept_class_id === p.concept_class_id,
       )
       .toObject()
     const queryResult = await CustomTable.executeQueryOnCustomTable(indexQuery)
@@ -53,9 +50,7 @@ export default class UsagiRowDelete {
 
   private static async getNumberOfConcepts() {
     const params = { sourceCode: this.usagiRow.sourceCode }
-    const numberQuery = (<Query>query().params(params))
-      .filter((r: any, p: any) => r.sourceCode === p.sourceCode)
-      .toObject()
+    const numberQuery = (<Query>query().params(params)).filter((r: any, p: any) => r.sourceCode === p.sourceCode).toObject()
     const queryResult = await Table.executeQueryOnTable(numberQuery)
     if (!queryResult.indices.length) return 0
     return queryResult.indices.length
@@ -99,9 +94,7 @@ export default class UsagiRowDelete {
 
   private static async getConceptsIndices() {
     const params = { sourceCode: this.usagiRow.sourceCode }
-    const indexQuery = (<Query>query().params(params))
-      .filter((r: any, p: any) => r.sourceCode === p.sourceCode)
-      .toObject()
+    const indexQuery = (<Query>query().params(params)).filter((r: any, p: any) => r.sourceCode === p.sourceCode).toObject()
     const queryResult = await Table.executeQueryOnTable(indexQuery)
     if (!queryResult.indices.length) return []
     return queryResult.indices
@@ -109,11 +102,6 @@ export default class UsagiRowDelete {
 
   private static async deleteFromMappedConceptIds() {
     const custom = this.usagiRow['ADD_INFO:customConcept'] ?? false
-    await MappedConcepts.deleteConceptInMappedConceptsBib(
-      this.usagiRow.sourceCode,
-      this.usagiRow.conceptName,
-      this.usagiRow.conceptId,
-      custom,
-    )
+    await MappedConcepts.deleteConceptInMappedConceptsBib(this.usagiRow.sourceCode, this.usagiRow.conceptName, this.usagiRow.conceptId, custom)
   }
 }

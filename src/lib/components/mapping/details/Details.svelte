@@ -1,31 +1,28 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte'
   import debounce from 'lodash.debounce'
   import Equivalence from '$lib/components/mapping/details/Equivalence.svelte'
   import AutocompleteInputSettings from '$lib/components/extra/AutocompleteInputSettings.svelte'
-  import type { AutoCompleteShortED, EquivalenceChangeED, IUsagiRow, MappingEvents } from '$lib/interfaces/Types'
-  import { SvgIcon } from '@radar-azdelta-int/radar-svelte-components'
+  import Icon from '$lib/components/extra/Icon.svelte'
+  import type { IDetailsProps } from '$lib/interfaces/NewTypes'
 
-  export let usagiRow: IUsagiRow
+  let { usagiRow, update, equivalenceUpdate }: IDetailsProps = $props()
 
-  const dispatch = createEventDispatcher<MappingEvents>()
+  let show: boolean = $state(false)
+  let reviewer: string = $state(usagiRow?.assignedReviewer ?? '')
+  let comment: string = $state(usagiRow?.comment ? transformComment(usagiRow.comment) : '')
 
-  let show: boolean = false
-  let reviewer: string = usagiRow?.assignedReviewer ?? ''
-  let comment: string = usagiRow?.comment ? transformComment(usagiRow.comment) : ''
-
-  const onEquivalenceChange = (e: CustomEvent<EquivalenceChangeED>) => dispatch('equivalenceChange', { ...e.detail })
   const onInputComment = debounce(() => updateDetails(), 500)
 
-  async function onReviewerChanged(e: CustomEvent<AutoCompleteShortED>) {
-    ;({ value: reviewer } = e.detail)
+  async function reviewerChanged(value: string) {
+    reviewer = value
     updateDetails()
   }
 
   const updateDetails = () => {
     const updatedComment = comment.replaceAll(/\n/g, '/n')
-    dispatch('updateDetails', { reviewer, comment: updatedComment })
+    update(reviewer, updatedComment)
   }
+
   const hideDetail = () => (show = false)
   const showDetail = () => (show = true)
 
@@ -38,40 +35,40 @@
     return comment.replaceAll('/n', '\n')
   }
 
-  $: {
+  $effect(() => {
     usagiRow
     reset()
-  }
+  })
 </script>
 
 {#if show}
   <section class="container">
     <div class="head">
-      <button class="button" on:click={hideDetail}>
-        <SvgIcon id="chevrons-right" />
+      <button class="button" onclick={hideDetail}>
+        <Icon id="chevrons-right" />
       </button>
       <h2 class="title">Detail</h2>
     </div>
     <div class="info-container">
-      <Equivalence on:equivalenceChange={onEquivalenceChange} />
+      <Equivalence {equivalenceUpdate} />
       <div class="reviewer">
         <p>Assigned reviewer: {reviewer}</p>
-        <AutocompleteInputSettings on:autoCompleteShort={onReviewerChanged} />
+        <AutocompleteInputSettings autoComplete={reviewerChanged} />
       </div>
       <div class="comments-container">
         <p class="comments-title">Comments</p>
-        <textarea title="Comments" name="Comments" cols="28" rows="6" on:input={onInputComment} bind:value={comment} />
+        <textarea title="Comments" name="Comments" cols="28" rows="6" oninput={onInputComment} bind:value={comment}> </textarea>
       </div>
     </div>
   </section>
 {:else}
   <div class="sidebar-left">
-    <button class="closed-bar" on:click={showDetail}>
-      <SvgIcon id="chevrons-left" />
+    <button class="closed-bar" onclick={showDetail}>
+      <Icon id="chevrons-left" />
       {#each 'DETAIL' as letter, _}
         <p>{letter}</p>
       {/each}
-      <SvgIcon id="chevrons-left" />
+      <Icon id="chevrons-left" />
     </button>
   </div>
 {/if}

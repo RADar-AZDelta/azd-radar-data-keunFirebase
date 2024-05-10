@@ -88,9 +88,7 @@ export default class Table {
 
   static async getAllMappedRowsToConcept(conceptName: string) {
     const params = { conceptName }
-    const rowsQuery = (<Query>query().params(params))
-      .filter((r: any, p: any) => r.conceptName === p.conceptName)
-      .toObject()
+    const rowsQuery = (<Query>query().params(params)).filter((r: any, p: any) => r.conceptName === p.conceptName).toObject()
     const queryResult = await this.executeQueryOnTable(rowsQuery)
     return queryResult
   }

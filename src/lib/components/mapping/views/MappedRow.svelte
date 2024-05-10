@@ -1,23 +1,22 @@
 <script lang="ts">
+  import Icon from '$lib/components/extra/Icon.svelte'
   import MappedRow from '$lib/helpers/mappedRow/MappedRow'
-  import type { IMappedRow, IUsagiRow } from '$lib/interfaces/Types'
-  import { SvgIcon } from '@radar-azdelta-int/radar-svelte-components'
+  import type { IMappedRowProps } from '$lib/interfaces/NewTypes'
 
-  export let renderedRow: IMappedRow, usagiRow: IUsagiRow
+  let { renderedRow, usagiRow }: IMappedRowProps = $props()
 
   let row: MappedRow
 
   const removeMapping = async () => row.deleteRow()
 
-  $: {
-    renderedRow, usagiRow
+  $effect(() => {
     row = new MappedRow(usagiRow, renderedRow)
-  }
+  })
 </script>
 
 <td>
   {#if renderedRow.conceptName}
-    <button on:click={removeMapping}><SvgIcon id="x" /></button>
+    <button onclick={removeMapping}><Icon id="x" /></button>
   {/if}
 </td>
 {#each Object.keys(renderedRow) as key}

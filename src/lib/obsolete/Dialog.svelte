@@ -1,0 +1,71 @@
+<!-- Copyright 2024 RADar-AZDelta -->
+<!-- SPDX-License-Identifier: gpl3+ -->
+<script lang="ts">
+  import Icon from '$lib/components/extra/Icon.svelte'
+  import type { IDialogProps } from './Types'
+  // import type { IDialogProps } from '$lib/types'
+
+  let { dialog = $bindable(), width, height, title, children, buttonsChildren }: IDialogProps = $props()
+
+  const outClick = () => dialog?.close()
+</script>
+
+<dialog class="dialog" bind:this={dialog} style="width: {width}; height: {height};">
+  <div class="dialog-container">
+    <button class="close-dialog" onclick={outClick}><Icon id="x" /></button>
+    {#if title}
+      <h3 class="title">{title}</h3>
+    {/if}
+    <div class="slot-container">
+      {#if children}
+        {@render children()}
+      {/if}
+    </div>
+    <div class="buttons">
+      {#if buttonsChildren}
+        {@render buttonsChildren()}
+      {/if}
+    </div>
+  </div>
+</dialog>
+
+<style>
+  .dialog {
+    border: none;
+    border-radius: 10px;
+    padding: 0;
+    top: 0;
+    left: 0;
+    transform: none;
+  }
+
+  .dialog-container {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .close-dialog {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    border: none;
+    background-color: inherit;
+    color: black;
+    cursor: pointer;
+  }
+
+  .title {
+    padding: 0 1rem;
+    margin-bottom: 0;
+  }
+
+  .slot-container {
+    flex: 1 1 auto;
+    overflow-y: auto;
+  }
+</style>

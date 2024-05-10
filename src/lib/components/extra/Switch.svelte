@@ -1,12 +1,14 @@
 <script lang="ts">
-  export let name: string, checked: boolean
+  import type { ISwitchProps } from '$lib/interfaces/NewTypes'
+
+  let { name, checked = $bindable() }: ISwitchProps = $props()
 </script>
 
 <div class="option">
   <p class="title">{name}</p>
   <div class="switch">
     <input class="switch-input" id={name} type="checkbox" bind:checked />
-    <label class="switch-label" for={name} />
+    <label class="switch-label" for={name}></label>
   </div>
 </div>
 

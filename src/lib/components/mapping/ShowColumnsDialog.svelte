@@ -1,18 +1,16 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte'
-  import type { ICustomEvents } from '$lib/interfaces/Types'
-  import { Dialog } from '@radar-azdelta-int/radar-svelte-components'
+  // import { Dialog } from '@radar-azdelta-int/radar-svelte-components'
+  import Dialog from '$lib/obsolete/Dialog.svelte'
+  import type { IShowColumnsDialogProps } from '$lib/interfaces/NewTypes'
 
-  export let dialog: HTMLDialogElement, columns: string[], shownColumns: string[]
+  let { dialog = $bindable(), columns, shownColumns, showColumns }: IShowColumnsDialogProps = $props()
 
-  const dispatch = createEventDispatcher<ICustomEvents>()
-
-  function showColumns(e: Event, column: string) {
+  function show(e: Event, column: string) {
     const show = (<any>e.target).checked
     const columnAlreadyShown = shownColumns.includes(column)
     if (show && !columnAlreadyShown) shownColumns.push(column)
     else shownColumns = shownColumns.filter(col => col !== column)
-    dispatch('showColumns', { columns: shownColumns })
+    showColumns(shownColumns)
   }
 </script>
 
@@ -21,7 +19,7 @@
     {#each columns as column}
       {@const checked = shownColumns.includes(column)}
       <div class="column">
-        <input type="checkbox" name="columns" id={column} {checked} on:change={e => showColumns(e, column)} />
+        <input type="checkbox" name="columns" id={column} {checked} onchange={e => show(e, column)} />
         <label for={column}>{column}</label>
       </div>
     {/each}

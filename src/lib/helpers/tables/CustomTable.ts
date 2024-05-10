@@ -133,10 +133,7 @@ export default class CustomTable {
     const indexQuery = (<Query>query().params(params))
       .filter(
         (r: any, p: any) =>
-          r.concept_name === p.concept_name &&
-          r.domain_id === p.domain_id &&
-          r.vocabulary_id === p.vocabulary_id &&
-          r.concept_class_id === p.concept_class_id,
+          r.concept_name === p.concept_name && r.domain_id === p.domain_id && r.vocabulary_id === p.vocabulary_id && r.concept_class_id === p.concept_class_id,
       )
       .toObject()
     const indexResult = await this.executeQueryOnCustomTable(indexQuery)

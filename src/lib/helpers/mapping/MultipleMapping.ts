@@ -32,13 +32,7 @@ export default class MultipleMapping extends CommonMapping {
     let sameRowIndex = -1
     for (let i = 0; i < alreadyMappedRows.indices.length; i++) {
       const { conceptId, conceptName, domainId, vocabularyId, className: classN } = alreadyMappedRows.queriedData[i]
-      if (
-        conceptId === id &&
-        conceptName === name &&
-        domainId === domain &&
-        vocabularyId === vocabulary &&
-        className === classN
-      )
+      if (conceptId === id && conceptName === name && domainId === domain && vocabularyId === vocabulary && className === classN)
         sameRowIndex = alreadyMappedRows.indices[i]
     }
     return sameRowIndex
@@ -61,9 +55,7 @@ export default class MultipleMapping extends CommonMapping {
 
   private static async getAlreadyMappedRows() {
     const params = { sourceCode: this.usagiRow!.sourceCode }
-    const rowsQuery = (<Query>query().params(params))
-      .filter((r: any, p: any) => r.sourceCode === p.sourceCode)
-      .toObject()
+    const rowsQuery = (<Query>query().params(params)).filter((r: any, p: any) => r.sourceCode === p.sourceCode).toObject()
     const alreadyMappedRows = await Table.executeQueryOnTable(rowsQuery)
     return alreadyMappedRows
   }
@@ -76,9 +68,7 @@ export default class MultipleMapping extends CommonMapping {
   }
 
   private static async getRowIndexFromQueryData(data: IQueryResult) {
-    const rowIndex = data.queriedData.findIndex(
-      r => r.conceptId === this.athenaRow!.id && r.conceptName === this.athenaRow!.name,
-    )
+    const rowIndex = data.queriedData.findIndex(r => r.conceptId === this.athenaRow!.id && r.conceptName === this.athenaRow!.name)
     return data.indices[rowIndex]
   }
 

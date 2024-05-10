@@ -1,12 +1,10 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte'
-  import type { PageEvents } from '$lib/interfaces/Types'
   import { logWhenDev } from '@radar-azdelta-int/radar-utils'
-  import { SvgIcon } from '@radar-azdelta-int/radar-svelte-components'
+  import Icon from '../extra/Icon.svelte'
+  import type { IFileChoiceDialogProps } from '$lib/interfaces/NewTypes'
 
-  export let processing: boolean, currentFileId: string | undefined
+  let { processing = $bindable(), currentFileId, fileUpload }: IFileChoiceDialogProps = $props()
 
-  const dispatch = createEventDispatcher<PageEvents>()
   let dialog: HTMLDialogElement
 
   export const showDialog = () => dialog.showModal()
@@ -16,18 +14,18 @@
 
   async function uploadFile(): Promise<void> {
     logWhenDev(`uploadFile: Upload the file instead of using the cached version.`)
-    dispatch('fileUpload', { id: currentFileId })
+    fileUpload(currentFileId)
     closeDialog()
   }
 </script>
 
 <dialog class="location-dialog" bind:this={dialog}>
   <div class="location-container">
-    <button on:click={closeDialog} class="close-dialog" disabled={processing}><SvgIcon id="x" /></button>
+    <button onclick={closeDialog} class="close-dialog" disabled={processing}><Icon id="x" /></button>
     <h2 class="dialog-title">Do you want to use this file or the cached version of this file?</h2>
     <div class="button-choices">
-      <button on:click={uploadFile}>File</button>
-      <button on:click={mapCachedFile}>Cached version</button>
+      <button onclick={uploadFile}>File</button>
+      <button onclick={mapCachedFile}>Cached version</button>
     </div>
   </div>
 </dialog>

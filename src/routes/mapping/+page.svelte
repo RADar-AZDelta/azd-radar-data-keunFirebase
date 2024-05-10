@@ -1,7 +1,6 @@
 <script lang="ts">
   import { base } from '$app/paths'
   import { page } from '$app/stores'
-  import { onMount } from 'svelte'
   import { beforeNavigate, goto } from '$app/navigation'
   import DataTable from '@radar-azdelta/svelte-datatable'
   import BergamotTranslator from '$lib/helpers/BergamotTranslator'
@@ -17,38 +16,43 @@
   import MappedConcepts from '$lib/helpers/general/MappedConcepts'
   import type { SvelteComponent } from 'svelte'
   import type { ITableOptions } from '@radar-azdelta/svelte-datatable'
-  import type { IUsagiRow, AutoMapRowED, RowSelectionED, NavigateRowED } from '$lib/interfaces/Types'
+  import type { IUsagiRow } from '$lib/interfaces/Types'
   import Database from '$lib/helpers/Database'
 
-  let file: File | undefined, customConceptsFile: File | undefined, flaggedConceptsFile: File | undefined
-  let selectedDomain: string | null = null
-  let tableRendered: boolean = false
-  let customTableRendered: boolean = false
-  let customsExtracted: boolean = false
-  let tablePrepared: boolean = false
+  let file: File | undefined = $state()
+  let customConceptsFile: File | undefined = $state()
+  let flaggedConceptsFile: File | undefined = $state()
+  let selectedDomain: string | null = $state(null)
+  let tableRendered: boolean = $state(false)
+  let customTableRendered: boolean = $state(false)
+  let customsExtracted: boolean = $state(false)
+  let tablePrepared: boolean = $state(false)
   let tableOptions: ITableOptions = { ...Config.tableOptions, id: $page.url.searchParams.get('id') ?? '' }
-  let currentVisibleRows: Map<number, IUsagiRow> = new Map<number, IUsagiRow>()
-  let selectedRow: IUsagiRow, selectedRowIndex: number
-  let search: SvelteComponent
-  let globalAthenaFilter: { column: string; filter: string | undefined } = { column: 'all', filter: undefined }
-  let filesLoaded: boolean = false
-  let syncingComplete: boolean = false
+  let currentVisibleRows: Map<number, IUsagiRow> = $state(new Map<number, IUsagiRow>())
+  let selectedRow: IUsagiRow | undefined = $state()
+  let selectedRowIndex: number = $state(0)
+  let search: SvelteComponent | undefined = $state()
+  let globalAthenaFilter: { column: string; filter: string | undefined } = $state({ column: 'all', filter: undefined })
+  let filesLoaded: boolean = $state(false)
+  let syncingComplete: boolean = $state(false)
 
   let customFileId: string | undefined = undefined
   let flaggedFileId: string | undefined = undefined
   let selectedFileId: string
 
-  async function navigateRow(e: CustomEvent<NavigateRowED>) {
-    ;({ row: selectedRow, index: selectedRowIndex } = e.detail)
+  async function navigateRow(row: IUsagiRow, index: number) {
+    selectedRow = row
+    selectedRowIndex = index
     globalAthenaFilter.filter = await translate(selectedRow.sourceName)
   }
 
-  const autoMapSingleRow = async (e: CustomEvent<AutoMapRowED>) =>
-    await AutoMapping.startAutoMappingRow(e.detail.index, selectedDomain)
+  async function autoMapSingleRow(index: number, sourceName: string) {
+    await AutoMapping.startAutoMappingRow(index, selectedDomain)
+  }
 
-  async function selectRow(e: CustomEvent<RowSelectionED>) {
-    await navigateRow(e)
-    search.showDialog()
+  async function selectRow(row: IUsagiRow, index: number) {
+    await navigateRow(row, index)
+    search?.showDialog()
   }
 
   const translate = async (text: string) => await BergamotTranslator.translate(text, $settings.language)
@@ -128,16 +132,16 @@
 
   const customTableRenderedComplete = () => (customTableRendered = true)
 
-  $: {
+  $effect(() => {
     if ($abortAutoMapping) abortAutoMap()
-  }
+  })
 
-  $: {
+  $effect(() => {
     if ($triggerAutoMapping) {
       autoMapPage()
       $triggerAutoMapping = false
     }
-  }
+  })
 
   beforeNavigate(async ({ to, cancel, type }) => {
     if (!syncingComplete) {
@@ -149,21 +153,20 @@
     }
   })
 
-  onMount(() => load())
+  $effect(() => {
+    load()
+  })
 </script>
 
 <svelte:head>
   <title>Keun</title>
-  <meta
-    name="description"
-    content="Keun is a mapping tool to map concepts to OMOP concepts. It's a web based modern variant of Usagi."
-  />
+  <meta name="description" content="Keun is a mapping tool to map concepts to OMOP concepts. It's a web based modern variant of Usagi." />
 </svelte:head>
 
 {#if file}
-  <button on:click={syncFile}>Save</button>
-  <button on:click={downloadPage}>Download</button>
-  <button on:click={approvePage}>Approve page</button>
+  <button onclick={syncFile}>Save</button>
+  <button onclick={downloadPage}>Download</button>
+  <button onclick={approvePage}>Approve page</button>
   <DataTable
     data={file}
     bind:this={Table.table}
@@ -171,30 +174,23 @@
     on:rendering={abortAutoMap}
     on:renderingComplete={() => autoMapPage(true)}
     modifyColumnMetadata={Table.modifyColumnMetadata}
+    let:renderedRow
+    let:columns
+    let:originalIndex
   >
     <UsagiRow
-      slot="default"
-      let:renderedRow
-      let:columns
-      let:originalIndex
       {renderedRow}
       {columns}
       index={originalIndex}
       disabled={$disableActions}
       bind:currentVisibleRows
-      on:rowSelection={selectRow}
-      on:autoMapRow={autoMapSingleRow}
+      rowSelection={selectRow}
+      autoMapRow={autoMapSingleRow}
     />
   </DataTable>
 
   {#if $settings}
-    <AthenaSearch
-      {selectedRow}
-      {selectedRowIndex}
-      bind:globalAthenaFilter
-      on:navigateRow={navigateRow}
-      bind:this={search}
-    />
+    <AthenaSearch {selectedRow} {selectedRowIndex} bind:globalAthenaFilter {navigateRow} bind:this={search} />
   {/if}
 
   <div class="hidden">

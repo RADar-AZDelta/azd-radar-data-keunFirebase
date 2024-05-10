@@ -21,9 +21,6 @@ export default class BergamotTranslator {
 
   private static async setup() {
     const registryUrl = dev ? 'bergamot/dev-registry.json' : '/Keun/bergamot/registry.json'
-    BergamotTranslator.translator = new LatencyOptimisedTranslator(
-      { workers: 1, batchSize: 1, registryUrl, html: true },
-      undefined,
-    )
+    BergamotTranslator.translator = new LatencyOptimisedTranslator({ workers: 1, batchSize: 1, registryUrl, html: true }, undefined)
   }
 }

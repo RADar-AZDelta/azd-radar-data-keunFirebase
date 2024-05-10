@@ -1,15 +1,15 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte'
   import debounce from 'lodash.debounce'
-  import type { ICustomEvents } from '$lib/interfaces/Types'
   import Settings from '$lib/helpers/Settings'
   import { settings } from '$lib/stores/store'
+  import type { IAutoCompleteSettingsProps } from '$lib/interfaces/NewTypes'
 
-  let inputValue: string, value: string
-  let filteredValues: string[] = []
-  let autoCompleted: boolean = false
+  let { autoComplete }: IAutoCompleteSettingsProps = $props()
 
-  const dispatch = createEventDispatcher<ICustomEvents>()
+  let inputValue: string = $state('')
+  let value: string = $state('')
+  let filteredValues: string[] = $state([])
+  let autoCompleted: boolean = $state(false)
 
   const updateSettings = async () => await Settings.updateSettings($settings)
 
@@ -20,17 +20,17 @@
       $settings.savedAuthors.push(inputValue)
       updateSettings()
     }
-    dispatch('autoCompleteShort', { value })
+    autoComplete(value)
   }
 
   function onClickAutoComplete(e: Event): void {
     inputValue = (e.target as HTMLLIElement).id
     save()
-    filterNames()
+    filterNames(inputValue)
     autoCompleted = true
   }
 
-  function filterNames(): void | string[] {
+  function filterNames(inputValue: string): void | string[] {
     let filteredNames: string[] = []
     if (!inputValue || !$settings.savedAuthors) return (filteredValues = filteredNames)
     const filteredAuthors = $settings.savedAuthors.filter(filterForAuthors)
@@ -51,20 +51,19 @@
     save()
   }, 500)
 
-  $: {
-    inputValue
-    filterNames()
-  }
+  $effect(() => {
+    filterNames(inputValue)
+  })
 </script>
 
 <div>
-  <input title="Assigned Reviewer" type="text" bind:value={inputValue} on:input={onInput} />
+  <input title="Assigned Reviewer" type="text" bind:value={inputValue} oninput={onInput} />
   {#if filteredValues.length}
     <ul>
       {#each filteredValues as name, i}
         {#if i < 7 && !autoCompleted}
-          <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-          <li id={name} on:click={onClickAutoComplete} on:keydown={onClickAutoComplete}>{name}</li>
+          <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+          <li id={name} onclick={onClickAutoComplete} onkeydown={onClickAutoComplete}>{name}</li>
         {/if}
       {/each}
     </ul>

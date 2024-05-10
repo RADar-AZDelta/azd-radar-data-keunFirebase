@@ -14,7 +14,6 @@ export default class Usagi {
   flagRow = async () => await UsagiActions.flagRow(this.usagiInfo)
   unapproveRow = async () => await UsagiActions.unapproveRow(this.usagiInfo)
   deleteRow = async () => await UsagiRowDelete.deleteRow(this.usagiInfo)
-  updatePropertyValue = async (column: string, value: string) =>
-    await UsagiUpdate.updateProperties(this.usagiInfo.usagiRowIndex, column, value)
+  updatePropertyValue = async (column: string, value: string) => await UsagiUpdate.updateProperties(this.usagiInfo.usagiRowIndex, column, value)
   updateUsagiRow = async (usagiInfo: IUsagiInfo) => (this.usagiInfo = usagiInfo)
 }

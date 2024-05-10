@@ -10,12 +10,7 @@ export default class CommonMapping {
   static equivalence: string
   static custom: boolean
 
-  static async setVars(
-    { athenaRow, usagiRow, usagiRowIndex }: IAthenaInfo,
-    action: string,
-    equivalence: string,
-    custom: boolean,
-  ) {
+  static async setVars({ athenaRow, usagiRow, usagiRowIndex }: IAthenaInfo, action: string, equivalence: string, custom: boolean) {
     this.athenaRow = athenaRow
     this.usagiRow = usagiRow
     this.usagiRowIndex = usagiRowIndex

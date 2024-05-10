@@ -5,10 +5,11 @@
   import Table from '$lib/helpers/tables/Table'
   import Config from '$lib/helpers/Config'
   import type { IMappedRow, IUsagiRow } from '$lib/interfaces/Types'
+  import type { IMappedViewProps } from '$lib/interfaces/NewTypes'
 
-  export let selectedRow: IUsagiRow
+  let { selectedRow }: IMappedViewProps = $props()
 
-  let mappedData: (IMappedRow | object)[] = [{}]
+  let mappedData: (IMappedRow | object)[] = $state([{}])
   let options: ITableOptions = { actionColumn: true, id: 'mappedConcepts' }
 
   async function loadMappedConcepts() {
@@ -16,15 +17,16 @@
     mappedData = await Table.getAllMappedConcepts(selectedRow.sourceCode)
   }
 
-  $: {
-    $mappedToConceptIds, selectedRow
+  $effect(() => {
+    $mappedToConceptIds
+    selectedRow
     loadMappedConcepts()
-  }
+  })
 </script>
 
 <div class="table">
-  <DataTable data={mappedData} columns={Config.columnsMapped} {options}>
-    <MappedRow slot="default" let:renderedRow {renderedRow} usagiRow={selectedRow} />
+  <DataTable data={mappedData} columns={Config.columnsMapped} {options} let:renderedRow>
+    <MappedRow {renderedRow} usagiRow={selectedRow} />
   </DataTable>
 </div>
 

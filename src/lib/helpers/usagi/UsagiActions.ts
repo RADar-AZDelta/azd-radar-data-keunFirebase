@@ -47,10 +47,8 @@ export default class UsagiActions {
     const userIsTheLastAuthor = user.name === statusSetBy
     const conceptId = id ?? sourceAutoAssignedConceptIds
     if (userIsTheLastAuthor && (semiApproval || fullApproval)) return {}
-    else if (semiApproval)
-      return { 'ADD_INFO:approvedBy': user.name, 'ADD_INFO:approvedOn': Date.now(), mappingStatus: 'APPROVED' }
-    else if (!semiApproval && !fullApproval)
-      return { statusSetBy: user.name, statusSetOn: Date.now(), mappingStatus: 'SEMI-APPROVED', conceptId }
+    else if (semiApproval) return { 'ADD_INFO:approvedBy': user.name, 'ADD_INFO:approvedOn': Date.now(), mappingStatus: 'APPROVED' }
+    else if (!semiApproval && !fullApproval) return { statusSetBy: user.name, statusSetOn: Date.now(), mappingStatus: 'SEMI-APPROVED', conceptId }
     else return {}
   }
 

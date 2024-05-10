@@ -1,9 +1,4 @@
-import {
-  FirebaseAuth,
-  FirebaseFirestore,
-  FirebaseStorage,
-  type FirebaseOptions,
-} from '@radar-azdelta-int/radar-firebase-utils'
+import { FirebaseAuth, FirebaseFirestore, FirebaseStorage, type FirebaseOptions } from '@radar-azdelta-int/radar-firebase-utils'
 import {
   PUBLIC_FIREBASE_API_KEY,
   PUBLIC_FIREBASE_APP_ID,

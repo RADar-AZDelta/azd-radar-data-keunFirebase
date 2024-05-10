@@ -5,13 +5,7 @@ import Config from './Config'
 import CustomTable from './tables/CustomTable'
 import Table from './tables/Table'
 import Mapping from './mapping/Mapping'
-import type {
-  ICustomConceptCompact,
-  IFile,
-  IFirestoreFile,
-  IStorageCustomMetadata,
-  IStorageMetadata,
-} from '$lib/interfaces/Types'
+import type { ICustomConceptCompact, IFile, IFirestoreFile, IStorageCustomMetadata, IStorageMetadata } from '$lib/interfaces/Types'
 
 export default class Database {
   private static database = database
@@ -163,14 +157,7 @@ export default class Database {
     await this.database.updateToFirestoreIfNotExist(this.firestoreFileColl, fileId, fileData)
   }
 
-  private static async uploadFile(
-    id: string,
-    name: string,
-    file: File,
-    customId: string,
-    flaggedId: string,
-    domain: string | null,
-  ) {
+  private static async uploadFile(id: string, name: string, file: File, customId: string, flaggedId: string, domain: string | null) {
     const metaData: IStorageCustomMetadata = {
       customMetadata: { name, customId, flaggedId, domain: domain! },
     }

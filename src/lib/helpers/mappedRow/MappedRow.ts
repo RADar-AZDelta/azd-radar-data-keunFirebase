@@ -22,9 +22,7 @@ export default class MappedRow {
 
   private async findRowFromTable() {
     const params = { sourceCode: this.usagiRow.sourceCode, conceptId: this.mappedRow.conceptId }
-    const conceptQuery = (<Query>query().params(params))
-      .filter((r: any, p: any) => r.sourceCode === p.sourceCode && r.conceptId === p.conceptId)
-      .toObject()
+    const conceptQuery = (<Query>query().params(params)).filter((r: any, p: any) => r.sourceCode === p.sourceCode && r.conceptId === p.conceptId).toObject()
     const conceptResult = await Table.executeQueryOnTable(conceptQuery)
     if (!conceptResult.indices.length) return
     const concept = conceptResult.queriedData[0]

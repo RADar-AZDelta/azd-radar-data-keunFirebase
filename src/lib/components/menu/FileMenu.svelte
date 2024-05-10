@@ -1,144 +1,45 @@
 <script lang="ts">
-  import { goto } from '$app/navigation'
-  import { base } from '$app/paths'
-  import { createEventDispatcher } from 'svelte'
-  import { user } from '$lib/stores/store'
-  import type { PageEvents, IFileInformation } from '$lib/interfaces/Types'
   import Database from '$lib/helpers/Database'
-  import { logWhenDev } from '@radar-azdelta-int/radar-utils'
-  import { Confirm, SvgIcon } from '@radar-azdelta-int/radar-svelte-components'
+  import Confirm from '$lib/obsolete/Confirm.svelte'
+  import File from './File.svelte'
+  import { userSessionStore as user } from '@radar-azdelta-int/radar-firebase-utils'
+  import type { IFileMenuProps } from '$lib/interfaces/NewTypes'
 
-  export let files: IFileInformation[]
+  let { files = $bindable(), setProcessing }: IFileMenuProps = $props()
 
-  const dispatch = createEventDispatcher<PageEvents>()
-  let confirmDialog: HTMLDialogElement
-  let fileToDelete = { id: '', name: '' }
+  let userIsUser = $derived($user.roles?.includes('user'))
+  let userIsAdmin = $derived($user.roles?.includes('admin'))
 
-  $: userIsUser = $user?.roles?.includes('user')
-  $: userIsAdmin = $user?.roles?.includes('admin')
+  let confirmDialog: HTMLDialogElement | undefined = $state(undefined)
+  let fileToDelete = $state({ id: '', name: '' })
 
-  async function openMappingTool(fileId: string, domain: string | null): Promise<void> {
-    logWhenDev('openMappingTool: Navigating to the mapping tool')
-    const cached = await Database.checkFileExistance(fileId)
-    if (!cached) return
-    let url = `${base}/mapping?id=${fileId}`
-    if (domain) url += `&domain=${domain}`
-    goto(url)
+  async function deleteFiles(approveId: string, props?: any | undefined): Promise<void> {
+    if (!props || approveId !== 'delete') return
+    await setProcessing(true)
+    if (props?.id) {
+      await Database.deleteKeunFile(props.id)
+      files = files.filter(file => file.id !== props.id)
+    }
+    await setProcessing(false)
   }
 
-  async function downloadFiles(id: string): Promise<void> {
-    if (!id) return
-    await Database.downloadFiles(id)
-    dispatch('getFiles')
-  }
-
-  async function deleteFiles(e: CustomEvent): Promise<void> {
-    const { id } = e.detail
-    dispatch('processing', { processing: true })
-    if (id) await Database.deleteKeunFile(id)
-    dispatch('getFiles')
-    dispatch('processing', { processing: false })
-  }
-
-  async function confirmFileDeletion(file: IFileInformation) {
-    const { id, name } = file
+  async function confirmFileDeletion(id: string, name: string) {
     fileToDelete = { id, name }
-    confirmDialog.showModal()
+    confirmDialog?.showModal()
   }
 </script>
 
-<Confirm
-  bind:dialog={confirmDialog}
-  title={fileToDelete.name}
-  approveDispatch="delete"
-  props={{ id: fileToDelete.id }}
-  on:delete={deleteFiles}
-/>
+<Confirm bind:dialog={confirmDialog} title={fileToDelete.name} approveProps={{ id: fileToDelete.id }} approveId="delete" approve={deleteFiles} />
 
 {#if $user && (userIsUser || userIsAdmin)}
-  {#each files as file}
-    <button class="file-card" on:click={() => openMappingTool(file.id, file.domain)}>
-      <div class="file-name-container">
-        <SvgIcon id="excel" width="40px" height="40px" />
-        <p class="file-name">{file?.name}</p>
-        <p class="file-domain">Domain: {file.domain ?? 'none'}</p>
-      </div>
-      {#if userIsAdmin}
-        <div>
-          <button class="download-file" on:click|stopPropagation={() => downloadFiles(file.id)}>
-            <SvgIcon id="download" />
-          </button>
-          <button class="delete-file" on:click|stopPropagation={() => confirmFileDeletion(file)}>
-            <SvgIcon id="x" />
-          </button>
-        </div>
-      {/if}
-    </button>
+  {#each files as file (file.id)}
+    <File {...file} {confirmFileDeletion} />
   {/each}
 {:else}
   <p class="rights-error">You do not have sufficient rights, contact an admin please.</p>
 {/if}
 
 <style>
-  .file-card {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem;
-    border: none;
-    background-color: inherit;
-  }
-
-  .file-card:hover,
-  .file-card:focus {
-    background-color: lightgray;
-  }
-
-  .file-name-container {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-
-  .file-name {
-    font-size: 1rem;
-  }
-
-  .file-domain {
-    margin-left: 2rem;
-  }
-
-  .delete-file {
-    border: none;
-    background-color: inherit;
-  }
-
-  .delete-file:hover {
-    background-color: #ff7f7f;
-  }
-
-  .delete-file:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px #e67f7f;
-    background-color: #ff7f7f;
-  }
-
-  .download-file {
-    border: none;
-    background-color: inherit;
-  }
-
-  .download-file:hover {
-    background-color: #80c3d8;
-  }
-
-  .download-file:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px #71bbd4;
-    background-color: #80c3d8;
-  }
-
   .rights-error {
     text-align: center;
     margin: 0 0 1rem 0;

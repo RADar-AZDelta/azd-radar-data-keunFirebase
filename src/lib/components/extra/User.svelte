@@ -1,49 +1,44 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
-  import { user } from '$lib/stores/store'
   import Auth from '$lib/helpers/Auth'
-  import { SvgIcon, clickOutside } from '@radar-azdelta-int/radar-svelte-components'
+  import clickOutside from '$lib/obsolete/clickOutside'
+  import Icon from './Icon.svelte'
+  import { userSessionStore as user } from '@radar-azdelta-int/radar-firebase-utils'
 
-  let userDialog: HTMLDialogElement
-  let author: string | undefined | null = undefined
-  let backupAuthor: string | undefined | null = undefined
+  let userDialog: HTMLDialogElement | undefined = $state(undefined)
 
   function closeDialog(): void {
     if (!$user) return
-    userDialog.close()
+    userDialog?.close()
   }
 
   function openDialog(): void {
-    userDialog.showModal()
+    userDialog?.showModal()
   }
 
   async function login(): Promise<void> {
     await Auth.logIn()
-    backupAuthor = author
     closeDialog()
   }
 
-  $: {
+  $effect(() => {
     if (!$user?.name && userDialog) userDialog.showModal()
-    else if ($user?.name) userDialog.close()
-  }
-
-  onMount(() => Auth.getAuthor())
+    else if ($user?.name) userDialog?.close()
+  })
 </script>
 
 <!-- <button title="Author" aria-label="User button" on:click={openDialog} class="header-button"> -->
-<button title="Author" aria-label="User button" on:click={openDialog} class="header-button">
+<button title="Author" aria-label="User button" onclick={openDialog} class="header-button">
   <p>{$user?.name ?? ''}</p>
-  <SvgIcon id="user" />
+  <Icon id="user" />
 </button>
 
 <dialog bind:this={userDialog} class="user-dialog">
-  <div class="user-container" use:clickOutside on:outClick={closeDialog}>
-    <button class="close-dialog" on:click={closeDialog} disabled={!$user ? true : false}>
-      <SvgIcon id="x" />
+  <div class="user-container" use:clickOutside onoutClick={closeDialog}>
+    <button class="close-dialog" onclick={closeDialog} disabled={!$user ? true : false}>
+      <Icon id="x" />
     </button>
     <section class="author">
-      <button on:click={login}>Microsoft</button>
+      <button onclick={login}>Microsoft</button>
     </section>
   </div>
 </dialog>
