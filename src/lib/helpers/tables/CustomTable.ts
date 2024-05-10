@@ -43,7 +43,7 @@ export default class CustomTable {
     const testRow = await this.getCustomTableRow(0)
     if (!testRow?.domain_id) await this.deleteCustomTableRows([0])
     await this.deleteFullTable()
-    for (let concept of concepts.queriedData) await this.addCustomConceptToTable(concept)
+    for (const concept of concepts.queriedData) await this.addCustomConceptToTable(concept)
     await this.deleteFirstEmptyConceptIfNeeded()
   }
 

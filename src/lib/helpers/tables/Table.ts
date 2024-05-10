@@ -33,7 +33,7 @@ export default class Table {
   static async getAllMappedConcepts(sourceCode: string) {
     const mappedConcepts = await this.getAllMappedConceptsToRow(sourceCode)
     const mappedRows: (object | IMappedRow)[] = []
-    for (let mappedConcept of mappedConcepts.queriedData) {
+    for (const mappedConcept of mappedConcepts.queriedData) {
       if (mappedConcept.conceptId === undefined || mappedConcept.conceptId === null) continue
       const row = await this.transformConceptToRowFormat(mappedConcept)
       if (!mappedRows.includes(row)) mappedRows.push(row)
@@ -43,7 +43,7 @@ export default class Table {
 
   static async saveAllMappedConcepts(sourceCode: string) {
     const concepts = await this.getAllMappedConceptsToRow(sourceCode)
-    for (let concept of concepts.queriedData) await this.addConceptToMappedConceptsIfExists(concept)
+    for (const concept of concepts.queriedData) await this.addConceptToMappedConceptsIfExists(concept)
   }
 
   private static async addConceptToMappedConceptsIfExists(concept: IUsagiRow) {
