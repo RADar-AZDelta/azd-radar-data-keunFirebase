@@ -44,8 +44,10 @@ export interface IAutoCompleteSettingsProps {
 }
 
 export interface ISwitchProps {
+  id: string
   name: string
   checked: boolean
+  updateValue?: (id: string, value: boolean) => Promise<void>
 }
 
 export interface IDetailsProps {
@@ -71,7 +73,7 @@ export interface ISearchHeadProps {
 }
 
 export interface IShowColumnsDialogProps {
-  dialog: HTMLDialogElement
+  dialog: HTMLDialogElement | undefined
   columns: string[]
   shownColumns: string[]
   showColumns: (columns: string[]) => Promise<void>

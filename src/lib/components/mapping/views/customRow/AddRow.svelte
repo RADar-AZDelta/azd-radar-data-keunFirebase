@@ -6,16 +6,16 @@
   import Database from '$lib/helpers/Database'
   import Icon from '$lib/components/extra/Icon.svelte'
   import type { IAddRowProps } from '$lib/interfaces/NewTypes'
-  import { rune } from '$lib/stores/runes.svelte'
+  import { createSettings } from '$lib/stores/runes.svelte'
 
   let { columns, originalIndex, renderedRow, updateError, addCustomConcept }: IAddRowProps = $props()
 
   const autoCompleteColumns = ['concept_class_id', 'domain_id']
-  let inputRow: Record<string, any> = {}
-  let settings = rune('settings')
+  let inputRow: Record<string, any> = $state({})
+  let settings = createSettings()
 
   async function addRow() {
-    const conceptAlreadyExists = await Database.checkIfCustomConceptAlreadyExists(<ICustomConceptCompact>inputRow)
+    const conceptAlreadyExists = await Database.checkIfCustomConceptAlreadyExists(inputRow as ICustomConceptCompact)
     // if (conceptAlreadyExists) return dispatch('updateError', { error: 'This custom concept already exists' })
     if (conceptAlreadyExists) return updateError('This custom concept already exists')
     const result = await CustomValidation.validateRow(inputRow, true).catch(error => updateError(error))
@@ -50,7 +50,7 @@
   })
 </script>
 
-<td><button on:click={addRow}><Icon id="save" /></button></td>
+<td><button onclick={addRow}><Icon id="save" /></button></td>
 {#each columns as column, _}
   {@const { id } = column}
   {@const list = Config.customConceptInfo[id]}

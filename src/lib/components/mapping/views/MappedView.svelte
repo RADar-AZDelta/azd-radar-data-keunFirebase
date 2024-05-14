@@ -1,14 +1,15 @@
 <script lang="ts">
   import DataTable, { type ITableOptions } from '@radar-azdelta/svelte-datatable'
-  import { mappedToConceptIds } from '$lib/stores/store'
   import MappedRow from './MappedRow.svelte'
   import Table from '$lib/helpers/tables/Table'
   import Config from '$lib/helpers/Config'
-  import type { IMappedRow, IUsagiRow } from '$lib/interfaces/Types'
+  import type { IMappedRow } from '$lib/interfaces/Types'
   import type { IMappedViewProps } from '$lib/interfaces/NewTypes'
+  import { createMappedToConceptIds } from '$lib/stores/runes.svelte'
 
   let { selectedRow }: IMappedViewProps = $props()
 
+  let mappedToConceptIds = createMappedToConceptIds()
   let mappedData: (IMappedRow | object)[] = $state([{}])
   let options: ITableOptions = { actionColumn: true, id: 'mappedConcepts' }
 
@@ -18,15 +19,17 @@
   }
 
   $effect(() => {
-    $mappedToConceptIds
+    mappedToConceptIds.value
     selectedRow
     loadMappedConcepts()
   })
 </script>
 
 <div class="table">
-  <DataTable data={mappedData} columns={Config.columnsMapped} {options} let:renderedRow>
-    <MappedRow {renderedRow} usagiRow={selectedRow} />
+  <DataTable data={mappedData} columns={Config.columnsMapped} {options}>
+    {#snippet rowChild(renderedRow: any)}
+      <MappedRow {renderedRow} usagiRow={selectedRow} />
+    {/snippet}
   </DataTable>
 </div>
 

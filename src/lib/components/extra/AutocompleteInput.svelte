@@ -4,9 +4,10 @@
   import clickOutside from '$lib/obsolete/clickOutside'
   import type { IAutoCompleteInputProps } from '$lib/interfaces/NewTypes'
 
-  let { id, list, inputValue = $bindable(null), autoComplete }: IAutoCompleteInputProps = $props()
+  let { id, list, inputValue = $bindable(), autoComplete }: IAutoCompleteInputProps = $props()
 
-  let value: string = $state('')
+  // let input: string | null = $state('')
+  let value: string | null = $state('')
   let key: string = $state('')
   let filteredValues: string[] = $state([])
   let autoCompleted: boolean = $state(false)
@@ -14,31 +15,33 @@
   let suggestionsFocus: boolean = $state(false)
 
   function save(): void {
-    if (!inputValue) return
-    value = inputValue
+    if (!value) return
     if (!list.includes(value)) return
     autoComplete(id, value)
   }
 
   function onClickAutoComplete(e: Event): void {
     const element = e.target as HTMLLIElement
-    ;({ textContent: inputValue, id: key } = element)
+    ;({ textContent: value, id: key } = element)
     save()
     autoCompleted = true
   }
 
   // A method to search for suggestions to apply to the input field
-  function filter(inputValue: string | null): void {
+  function filter(input: string | null | undefined): void {
     filteredValues = []
-    if (!inputValue) return
+    console.log('FILTERING HERE ', input)
+    if (!input) return
     const pairs = list.filter(findPossibleSuggestions)
+    console.log('PAIRS ', pairs)
     for (let value of pairs) filteredValues.push(value)
+    filteredValues = filteredValues
   }
 
-  function findPossibleSuggestions(value: string) {
-    if (!inputValue) return
-    const lValue = value.toLowerCase()
-    const lInput = inputValue?.toLowerCase()
+  function findPossibleSuggestions(v: string) {
+    if (!value) return
+    const lValue = v.toLowerCase()
+    const lInput = value.toLowerCase()
     const notEqual = lValue !== lInput
     const including = lValue.includes(lInput)
     if (notEqual && including) return value
@@ -46,21 +49,29 @@
 
   const onInput = debounce(async (e: any) => {
     autoCompleted = false
+    console.log('INPUT VALUE ', value)
+    filter(value)
     save()
-  }, 1000)
+  }, 300)
+
+  // function onInput() {
+  //   console.log(" ON INPUT ")
+  // }
 
   const focussing = () => (focus = suggestionsFocus = true)
   const nonFocussing = () => (focus = false)
   const outClick = () => (suggestionsFocus = false)
 
   $effect(() => {
-    filter(inputValue)
+    // console.log("FILTERING ", inputValue)
+    value
+    filter(value)
   })
 </script>
 
 <div class="input-container">
-  <input title={id} bind:value={inputValue} oninput={onInput} onfocus={focussing} onfocusout={nonFocussing} />
-  {#if filteredValues.length && (focus || suggestionsFocus)}
+  <input title={id} bind:value oninput={onInput} onfocus={focussing} onfocusout={nonFocussing} />
+  {#if filteredValues.length > 0 && (focus || suggestionsFocus)}
     <ul use:clickOutside onoutClick={outClick}>
       {#each filteredValues as suggestion, i}
         {#if i < 7 && !autoCompleted}

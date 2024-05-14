@@ -67,8 +67,19 @@
 
 <div class="custom-concept-container">
   <h2 class="custom-concept-title">Create a custom concept</h2>
-  <DataTable {data} {columns} {options} let:columns let:renderedRow let:originalIndex>
-    <CustomRow {renderedRow} {columns} {originalIndex} usagiRow={selectedRow} usagiRowIndex={selectedRowIndex} {equivalence} {updateError} {addCustomConcept} />
+  <DataTable {data} {columns} {options}>
+    {#snippet rowChild(renderedRow: any, originalIndex: any, index: any, columns: any, option: any)}
+      <CustomRow
+        {renderedRow}
+        {columns}
+        {originalIndex}
+        usagiRow={selectedRow}
+        usagiRowIndex={selectedRowIndex}
+        {equivalence}
+        {updateError}
+        {addCustomConcept}
+      />
+    {/snippet}
   </DataTable>
 
   {#if errorMessage}

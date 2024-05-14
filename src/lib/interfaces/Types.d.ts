@@ -214,6 +214,7 @@ export interface ISettings {
   savedAuthors: string[]
   vocabularyIdCustomConcept: string
   popupSidesShowed: ISides
+  [key: string]: any
 }
 
 export interface ISides {

@@ -1,6 +1,5 @@
 <script lang="ts">
   import { EditableCell } from '@radar-azdelta/svelte-datatable'
-  import { mappedToConceptIds, user } from '$lib/stores/store'
   import Config from '$lib/helpers/Config'
   import CustomRow from '$lib/helpers/customRow/CustomRow'
   import Database from '$lib/helpers/Database'
@@ -8,9 +7,12 @@
   import type { ICustomConceptCompact } from '$lib/interfaces/Types'
   import Icon from '$lib/components/extra/Icon.svelte'
   import type { IRowProps } from '$lib/interfaces/NewTypes'
+  import { userSessionStore as user } from '@radar-azdelta-int/radar-firebase-utils'
+  import { createMappedToConceptIds } from '$lib/stores/runes.svelte'
 
   let { usagiRow, usagiRowIndex, renderedRow, columns, equivalence, updateError }: IRowProps = $props()
 
+  let mappedToConceptIds = createMappedToConceptIds()
   let row: CustomRow = new CustomRow(renderedRow as ICustomConceptCompact, usagiRow, usagiRowIndex)
 
   const mapRow = async () => await row.mapCustomConcept('SEMI-APPROVED', equivalence)
@@ -26,8 +28,10 @@
     if (result) return (renderedRow[columnId] = renderedRow[columnId])
     const { concept_name, concept_class_id, domain_id, vocabulary_id } = renderedRow
     const existingConcept = { concept_name, concept_class_id, domain_id, vocabulary_id }
-    if (columnId === 'concept_name')
-      $mappedToConceptIds[usagiRow.sourceCode][`custom-${value}`] = $mappedToConceptIds[usagiRow.sourceCode]?.[`custom-${renderedRow.concept_name}`]
+    if (columnId === 'concept_name') {
+      mappedToConceptIds.value[usagiRow.sourceCode][`custom-${value}`] = mappedToConceptIds.value[usagiRow.sourceCode]?.[`custom-${renderedRow.concept_name}`]
+      mappedToConceptIds.update(mappedToConceptIds.value)
+    }
     renderedRow[columnId] = value
     const { concept_name: name, concept_class_id: classId, domain_id: domain, vocabulary_id: vocab } = renderedRow
     const newConcept = { concept_name: name, concept_class_id: classId, domain_id: domain, vocabulary_id: vocab }
@@ -43,7 +47,7 @@
 </script>
 
 {#if usagiRow}
-  {@const mappingStatus = $mappedToConceptIds[usagiRow.sourceCode]?.[`custom-${renderedRow.concept_name}`]}
+  {@const mappingStatus = mappedToConceptIds.value[usagiRow.sourceCode]?.[`custom-${renderedRow.concept_name}`]}
   {@const color = Config.colors[mappingStatus]}
   <td class="actions-cell">
     <div class="actions-grid">

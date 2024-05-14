@@ -1,20 +1,23 @@
-import { mappedToConceptIds } from '$lib/stores/store'
 import Settings from './Settings'
 import type { IMappedRows, IMappedRowsConcept } from '$lib/interfaces/Types'
+import { createMappedToConceptIds } from '$lib/stores/runes.svelte'
 
 export default class MappedConcepts {
   static async resetMappedConceptsBib() {
-    mappedToConceptIds.set({})
+    const mappedToConceptIds = await this.getMappedConceptsBib()
+    mappedToConceptIds.update({})
   }
 
   static async updateMappedConceptsBib(updatedConcept: IMappedRows) {
     const multipleMapping = await Settings.getMappingToMultiple()
-    mappedToConceptIds.update(concepts => (concepts = this.addMappedConceptsToBib(concepts, updatedConcept, multipleMapping)))
+    const mappedToConceptIds = await this.getMappedConceptsBib()
+    mappedToConceptIds.update(this.addMappedConceptsToBib(mappedToConceptIds.value, updatedConcept, multipleMapping))
   }
 
   static async deleteConceptInMappedConceptsBib(sourceCode: string, conceptName?: string | null, conceptId?: number | null, custom: boolean = false) {
-    if (!custom) mappedToConceptIds.update(con => (con = this.deleteMappedConceptsInBib(con, sourceCode, conceptId)))
-    else mappedToConceptIds.update(con => (con = this.deleteMappedCustomConceptsInBib(con, sourceCode, conceptName)))
+    const mappedToConceptIds = await this.getMappedConceptsBib()
+    if (!custom) mappedToConceptIds.update(this.deleteMappedConceptsInBib(mappedToConceptIds.value, sourceCode, conceptId))
+    else mappedToConceptIds.update(this.deleteMappedCustomConceptsInBib(mappedToConceptIds.value, sourceCode, conceptName))
   }
 
   private static addMappedConceptsToBib(currentConcepts: IMappedRows, updatedConcepts: IMappedRows, multipleMapping: boolean) {
@@ -50,12 +53,8 @@ export default class MappedConcepts {
     return currentConcepts
   }
 
-  static async getMappedConceptsBib(): Promise<IMappedRows> {
-    return new Promise(resolve =>
-      mappedToConceptIds.subscribe(concepts => {
-        if (!concepts) throw new Error('Concepts not found')
-        resolve(concepts)
-      }),
-    )
+  static async getMappedConceptsBib() {
+    const mappedToConceptIds = createMappedToConceptIds()
+    return mappedToConceptIds
   }
 }

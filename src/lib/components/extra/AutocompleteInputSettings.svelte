@@ -1,23 +1,24 @@
 <script lang="ts">
   import debounce from 'lodash.debounce'
   import Settings from '$lib/helpers/Settings'
-  import { settings } from '$lib/stores/store'
   import type { IAutoCompleteSettingsProps } from '$lib/interfaces/NewTypes'
+  import { createSettings } from '$lib/stores/runes.svelte'
 
   let { autoComplete }: IAutoCompleteSettingsProps = $props()
 
+  let settings = createSettings()
   let inputValue: string = $state('')
   let value: string = $state('')
   let filteredValues: string[] = $state([])
   let autoCompleted: boolean = $state(false)
 
-  const updateSettings = async () => await Settings.updateSettings($settings)
+  const updateSettings = async () => await Settings.updateSettings(settings.value)
 
   function save(): void {
     value = inputValue
-    if (!$settings.savedAuthors) $settings.savedAuthors = []
-    if (!$settings.savedAuthors.includes(inputValue)) {
-      $settings.savedAuthors.push(inputValue)
+    if (!settings.value.savedAuthors) settings.updateProp('savedAuthors', [])
+    if (!settings.value.savedAuthors.includes(inputValue)) {
+      settings.updateProp('savedAuthors', [...settings.value.savedAuthors, inputValue])
       updateSettings()
     }
     autoComplete(value)
@@ -32,8 +33,8 @@
 
   function filterNames(inputValue: string): void | string[] {
     let filteredNames: string[] = []
-    if (!inputValue || !$settings.savedAuthors) return (filteredValues = filteredNames)
-    const filteredAuthors = $settings.savedAuthors.filter(filterForAuthors)
+    if (!inputValue || !settings.value.savedAuthors) return (filteredValues = filteredNames)
+    const filteredAuthors = settings.value.savedAuthors.filter(filterForAuthors)
     filteredNames = [...filteredNames, ...filteredAuthors]
     filteredValues = filteredNames
   }

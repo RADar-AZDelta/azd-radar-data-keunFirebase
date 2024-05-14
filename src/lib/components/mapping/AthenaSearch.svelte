@@ -79,21 +79,31 @@
     <section class="search-container">
       {#if selectedRow}
         <Search {views} bind:globalFilter={globalAthenaFilter} showFilters={true}>
-          <div slot="action-athena" let:renderedRow class="actions-grid">
-            <AthenaActions {renderedRow} {selectedRow} {selectedRowIndex} {equivalence} />
-          </div>
-          <div slot="upperSlot">
-            <SearchHead {selectedRow} {navigateRow} />
-          </div>
-          <div slot="slotView1">
-            <CustomView {selectedRow} {selectedRowIndex} {equivalence} />
-          </div>
-          <div slot="slotView2">
-            <MappedView {selectedRow} />
-          </div>
-          <div slot="rightSlot">
-            <Details usagiRow={selectedRow} update={updateDetails} equivalenceUpdate={equivalenceChange} />
-          </div>
+          {#snippet actionChild(renderedRow: any)}
+            <div class="actions-grid">
+              <AthenaActions {renderedRow} {selectedRow} {selectedRowIndex} {equivalence} />
+            </div>
+          {/snippet}
+          {#snippet upperChild()}
+            <div>
+              <SearchHead {selectedRow} {navigateRow} />
+            </div>
+          {/snippet}
+          {#snippet firstView()}
+            <div>
+              <CustomView {selectedRow} {selectedRowIndex} {equivalence} />
+            </div>
+          {/snippet}
+          {#snippet secondView()}
+            <div>
+              <MappedView {selectedRow} />
+            </div>
+          {/snippet}
+          {#snippet rightChild()}
+            <div>
+              <Details usagiRow={selectedRow} update={updateDetails} equivalenceUpdate={equivalenceChange} />
+            </div>
+          {/snippet}
         </Search>
       {/if}
     </section>

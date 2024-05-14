@@ -18,7 +18,7 @@
   }: IUsagiRowProps = $props()
 
   let usagiRow: Usagi
-  let color: string = 'inherit'
+  let color: string = $state('inherit')
   const width = '10px'
   const height = '10px'
 
@@ -32,12 +32,13 @@
   const onClickAutoMap = async () => autoMapRow(index, renderedRow.sourceName)
 
   async function getColors() {
-    const color = (<Record<string, string>>Config.colors)[renderedRow.mappingStatus]
+    const color = Config.colors[renderedRow.mappingStatus]
     if (!color) return 'inherit'
     return color
   }
 
   async function setPreset() {
+    console.log("SETTING PRESET VALUES")
     if (!renderedRow.matchScore) renderedRow.matchScore = 0
     if (!renderedRow.mappingStatus) renderedRow.mappingStatus = 'UNCHECKED'
     if (!renderedRow.conceptName) renderedRow.conceptName = 'Unmapped'
@@ -46,12 +47,12 @@
   }
 
   async function setCurrentRow() {
-    const usagiInfo: IUsagiInfo = { usagiRow: <IUsagiRow>renderedRow, usagiRowIndex: index }
+    const usagiInfo: IUsagiInfo = { usagiRow: renderedRow as IUsagiRow, usagiRowIndex: index }
     if (!usagiRow) await createUsagiRow()
     await updateUsagiRow(usagiInfo)
   }
 
-  const createUsagiRow = async () => (usagiRow = new Usagi(<IUsagiRow>renderedRow, index))
+  const createUsagiRow = async () => (usagiRow = new Usagi(renderedRow as IUsagiRow, index))
 
   $effect(() => {
     renderedRow
@@ -62,25 +63,25 @@
   })
 
   $effect(() => {
-    usagiRow = new Usagi(<IUsagiRow>renderedRow, index)
+    usagiRow = new Usagi(renderedRow as IUsagiRow, index)
   })
 </script>
 
 <td class="actions-cell" style={`background-color: ${color}`}>
   <div class="actions-grid">
-    <button on:click={mapRow} title="Map" {disabled}><Icon id="search" {width} {height} /></button>
-    <button on:click={deleteRow} title="Delete" {disabled}><Icon id="eraser" {width} {height} /></button>
-    <button on:click={onClickAutoMap} title="Automap" {disabled}>AUTO</button>
+    <button onclick={mapRow} title="Map" {disabled}><Icon id="search" {width} {height} /></button>
+    <button onclick={deleteRow} title="Delete" {disabled}><Icon id="eraser" {width} {height} /></button>
+    <button onclick={onClickAutoMap} title="Automap" {disabled}>AUTO</button>
     <p>{renderedRow['ADD_INFO:numberOfConcepts'] > 1 ? renderedRow['ADD_INFO:numberOfConcepts'] : ''}</p>
-    <button on:click={approveRow} title="Approve" {disabled}><Icon id="check" {width} {height} /></button>
-    <button on:click={flagRow} title="Flag" {disabled}><Icon id="flag" {width} {height} /></button>
-    <button on:click={unapproveRow} title="Unapprove" {disabled}><Icon id="x" {width} {height} /></button>
+    <button onclick={approveRow} title="Approve" {disabled}><Icon id="check" {width} {height} /></button>
+    <button onclick={flagRow} title="Flag" {disabled}><Icon id="flag" {width} {height} /></button>
+    <button onclick={unapproveRow} title="Unapprove" {disabled}><Icon id="x" {width} {height} /></button>
   </div>
 </td>
 {#each columns || [] as column (column.id)}
   {@const { id } = column}
   {@const value = renderedRow[id]}
-  <td on:dblclick={mapRow} class="cell" style={`background-color: ${color}`} title={value}>
+  <td ondblclick={mapRow} class="cell" style={`background-color: ${color}`} title={value}>
     {#if Config.usagiRowConfig.dateCells.includes(id)}
       <p>{reformatDate(new Date(value))}</p>
     {:else if Config.usagiRowConfig.editableCells.includes(id)}

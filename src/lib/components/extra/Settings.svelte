@@ -4,12 +4,11 @@
   import Settings from '$lib/helpers/Settings'
   import clickOutside from '$lib/obsolete/clickOutside'
   import Icon from './Icon.svelte'
-  import { rune } from '$lib/stores/runes.svelte'
-  import type { ISettings } from '$lib/interfaces/Types'
+  import { createAbortAutoMapping, createSettings, createTriggerAutoMapping } from '$lib/stores/runes.svelte'
 
-  let settings: { value: ISettings } = rune('settings')
-  let abortAutoMapping: { value: boolean } = rune('abortAutoMapping')
-  let triggerAutoMapping: { value: boolean } = rune('triggerAutoMapping')
+  let settings = createSettings()
+  let abortAutoMapping = createAbortAutoMapping()
+  let triggerAutoMapping = createTriggerAutoMapping()
   let savedAutomapping: boolean = $state(false)
   let possibleOutclick: boolean = $state(false)
   let settingsDialog: HTMLDialogElement | undefined = $state(undefined)
@@ -26,11 +25,15 @@
     await Settings.updateSettings(settings.value)
     const automappingChanged = settings.value.autoMap && savedAutomapping !== settings.value.autoMap
     savedAutomapping = settings.value.autoMap
-    if (automappingChanged) triggerAutoMapping.value = savedAutomapping = true
+    if (automappingChanged) {
+      triggerAutoMapping.update(true)
+      savedAutomapping = true
+    }
   }
 
   async function abort() {
-    if (!settings.value.autoMap && savedAutomapping !== settings.value.autoMap) abortAutoMapping.value = true
+    if (!settings.value.autoMap && savedAutomapping !== settings.value.autoMap) abortAutoMapping.update(true)
+
   }
 
   async function outClick() {
@@ -44,6 +47,15 @@
     abort()
     if (!Settings.settingsRetrievedFromStorage) return
     saveSettings()
+  }
+
+  async function updateSettingsInput(e: any, id: string) {
+    const value = e.target.value
+    updateSettings(id, value)
+  }
+
+  async function updateSettings(prop: string, value: any) {
+    settings.updateProp(prop, value)
   }
 
   $effect(() => {
@@ -61,11 +73,11 @@
       <section class="settings">
         <h2 class="title">Settings</h2>
         <div class="options">
-          <Switch name="Map to multiple concepts?" bind:checked={settings.value.mapToMultipleConcepts} />
-          <Switch name="Automatic mapping?" bind:checked={settings.value.autoMap} />
+          <Switch id="mapToMultipleConcepts" name="Map to multiple concepts?" checked={settings.value.mapToMultipleConcepts} updateValue={updateSettings} />
+          <Switch id="autoMap" name="Automatic mapping?" checked={settings.value.autoMap} updateValue={updateSettings} />
           <div class="option">
             <p>Language of source CSV</p>
-            <select name="language" id="language" bind:value={settings.value.language}>
+            <select name="language" id="language" value={settings.value.language} onchange={(e: Event) => updateSettingsInput(e, 'language')}>
               {#each Object.keys(Config.languages) as lang, _}
                 <option value={lang} selected={lang === settings.value.language}>{Config.languages[lang]}</option>
               {/each}
@@ -73,7 +85,12 @@
           </div>
           <div class="option">
             <p>Default vocabulary ID for custom concepts</p>
-            <input type="text" placeholder="local ID e.g. AZDELTA" bind:value={settings.value.vocabularyIdCustomConcept} />
+            <input
+              type="text"
+              placeholder="local ID e.g. AZDELTA"
+              value={settings.value.vocabularyIdCustomConcept}
+              onchange={(e: Event) => updateSettingsInput(e, 'vocabularyIdCustomConcept')}
+            />
           </div>
         </div>
       </section>

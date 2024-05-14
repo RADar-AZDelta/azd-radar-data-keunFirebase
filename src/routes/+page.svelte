@@ -79,9 +79,6 @@
     uploadFile()
   }
 
-  // const reset = async () => (files = await Database.reset())
-  const reset = async () => {}
-
   async function setProcessing(process: boolean) {
     processing = process
   }
@@ -108,7 +105,6 @@
       <div class="file-menu">
         <div class="title-container">
           <h1 class="title">Files to map</h1>
-          <button class="reset" title="Remove all the files" onclick={reset}>Reset</button>
         </div>
         <div class="file-list">
           <FileMenu {files} {setProcessing} />
@@ -156,17 +152,6 @@
     align-items: center;
     justify-content: space-between;
     margin: 0.5rem 1rem;
-  }
-
-  .reset {
-    background-color: #f6f6f6;
-    border: 1px solid #d8d8d8;
-    border-radius: 5px;
-  }
-
-  .reset:hover {
-    background-color: lightgray;
-    cursor: pointer;
   }
 
   .file-list {

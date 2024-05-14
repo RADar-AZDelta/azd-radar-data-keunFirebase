@@ -5,8 +5,8 @@
 
   let { dialog = $bindable(), columns, shownColumns, showColumns }: IShowColumnsDialogProps = $props()
 
-  function show(e: Event, column: string) {
-    const show = (<any>e.target).checked
+  function show(e: any, column: string) {
+    const show = e.target.checked
     const columnAlreadyShown = shownColumns.includes(column)
     if (show && !columnAlreadyShown) shownColumns.push(column)
     else shownColumns = shownColumns.filter(col => col !== column)

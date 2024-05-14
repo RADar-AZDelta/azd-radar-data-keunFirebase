@@ -1,8 +1,8 @@
 import { logWhenDev } from '@radar-azdelta-int/radar-utils'
 import { PUBLIC_VOCABULARY } from '$env/static/public'
 import { database } from '$lib/constants/firebase'
-import { user } from '$lib/stores/store'
 import type { ISettings, IUser } from '$lib/interfaces/Types'
+import { userSessionStore as user } from '@radar-azdelta-int/radar-firebase-utils'
 
 const defaultSettings: ISettings = {
   mapToMultipleConcepts: false,

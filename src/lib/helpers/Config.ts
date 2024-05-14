@@ -3,7 +3,9 @@ import customConceptInfo from '$lib/constants/customConceptInfo.json'
 import columns from '$lib/constants/columns.json'
 import tableOptions from '$lib/constants/tableOptions.json'
 import smallConfig from '$lib/constants/config.json'
+import defaultSettings from '$lib/constants/defaultSettings.json'
 import type { ITableOptions } from '@radar-azdelta/svelte-datatable'
+import type { ISettings } from '$lib/interfaces/Types'
 
 export default class Config {
   static filters = filters
@@ -23,4 +25,5 @@ export default class Config {
   static customBlobInitial = smallConfig.customBlobInitial
   static flaggedBlobInitial = smallConfig.flaggedBlobInitial
   static equivalenceOptions = smallConfig.equivalenceOptions
+  static defaultSettings: ISettings = defaultSettings
 }

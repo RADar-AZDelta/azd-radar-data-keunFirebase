@@ -4,19 +4,22 @@
   import Header from '$lib/components/extra/Header.svelte'
   import Settings from '$lib/components/extra/Settings.svelte'
   import User from '$lib/components/extra/User.svelte'
-  import { settings, user } from '$lib/stores/store'
   import '$lib/styles/table.scss'
   import '@radar-azdelta/svelte-datatable/style'
   import SettingsImpl from '$lib/helpers/Settings'
+  import { userSessionStore as user } from '@radar-azdelta-int/radar-firebase-utils'
+  import { createSettings } from '$lib/stores/runes.svelte'
+
+  let settings = createSettings()
 
   async function retrieveSettings() {
     const storedSettings = await SettingsImpl.getSettings()
-    if (storedSettings) $settings = storedSettings
+    if (storedSettings) settings.update(storedSettings)
   }
 
-  $: {
+  $effect(() => {
     if ($user) retrieveSettings()
-  }
+  })
 </script>
 
 <main>
@@ -29,7 +32,7 @@
     </ul>
     {#if $page.url.pathname.substring($page.url.pathname.lastIndexOf('/')) !== 'registration'}
       <div class="header-buttons-container" id="settings">
-        {#if $settings}
+        {#if settings.value}
           <Settings />
           <User />
         {/if}

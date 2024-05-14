@@ -1,16 +1,82 @@
-import { getContext, hasContext, setContext } from 'svelte'
+import Config from '$lib/helpers/Config'
+import type { IMappedRows, ISettings } from '$lib/interfaces/Types'
 
-export const rune = (context: string, startValue?: any): { value: any } => {
-  if (hasContext(context)) return getContext(context)
-  let _state = $state(startValue)
-  const _rune = {
-    get value() {
-      return _state
-    },
-    set value(v) {
-      _state = v
-    },
+export function createSettings() {
+  let settings = $state(Config.defaultSettings)
+
+  function updateProp(prop: string, value: any) {
+    settings[prop] = value
   }
-  setContext(context, _rune)
-  return _rune
+
+  function update(newSettings: ISettings) {
+    settings = newSettings
+  }
+
+  return {
+    get value() {
+      return settings
+    },
+    updateProp,
+    update,
+  }
+}
+
+export function createAbortAutoMapping() {
+  let abortAutoMapping = $state(false)
+
+  function update(value: boolean) {
+    abortAutoMapping = value
+  }
+
+  return {
+    get value() {
+      return abortAutoMapping
+    },
+    update,
+  }
+}
+
+export function createTriggerAutoMapping() {
+  let triggerAutoMapping = $state(false)
+
+  function update(value: boolean) {
+    triggerAutoMapping = value
+  }
+
+  return {
+    get value() {
+      return triggerAutoMapping
+    },
+    update,
+  }
+}
+
+export function createMappedToConceptIds() {
+  let mappedToConceptIds: IMappedRows = $state({})
+
+  function update(value: IMappedRows) {
+    mappedToConceptIds = value
+  }
+
+  return {
+    get value() {
+      return mappedToConceptIds
+    },
+    update,
+  }
+}
+
+export function createDisableActions() {
+  let disableActions = $state(false)
+
+  function update(value: boolean) {
+    disableActions = value
+  }
+
+  return {
+    get value() {
+      return disableActions
+    },
+    update,
+  }
 }

@@ -1,5 +1,5 @@
-import { settings } from '$lib/stores/store'
 import type { ISettings } from '$lib/interfaces/Types'
+import { createSettings } from '$lib/stores/runes.svelte'
 
 export default class Settings {
   static async getLanguage() {
@@ -18,11 +18,7 @@ export default class Settings {
   }
 
   private static async getSettings(): Promise<ISettings> {
-    return new Promise(resolve =>
-      settings.subscribe(settings => {
-        if (!settings) throw new Error('Settings not found')
-        resolve(settings)
-      }),
-    )
+    const settings = createSettings()
+    return settings.value
   }
 }

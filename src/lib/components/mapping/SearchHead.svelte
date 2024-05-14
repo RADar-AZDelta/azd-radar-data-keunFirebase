@@ -3,14 +3,15 @@
   import ShowColumnsDialog from '$lib/components/mapping/ShowColumnsDialog.svelte'
   import Table from '$lib/helpers/tables/Table'
   import type Query from 'arquero/dist/types/query/query'
-  import type { IQueryResult, IUsagiRow, ShowColumnsED } from '$lib/interfaces/Types'
+  import type { IQueryResult, IUsagiRow } from '$lib/interfaces/Types'
   import Icon from '../extra/Icon.svelte'
   import type { ISearchHeadProps } from '$lib/interfaces/NewTypes'
 
   let { selectedRow, navigateRow }: ISearchHeadProps = $props()
 
-  let dialog: HTMLDialogElement
-  let shownColumns: string[] = ['sourceCode', 'sourceName', 'sourceFrequency']
+  let dialog: HTMLDialogElement | undefined = $state()
+  let shownColumns: string[] = $state(['sourceCode', 'sourceName', 'sourceFrequency'])
+  let columns = $derived(selectedRow ? Object.keys(selectedRow) : [])
 
   async function getPagination() {
     const { currentPage } = await Table.getTablePagination()
@@ -29,7 +30,7 @@
     const conceptName = concept === 'Unmapped' ? undefined : concept
     const conceptName2 = concept === 'Unmapped' ? null : concept
     const params = { sourceCode, sourceName, conceptName, conceptName2 }
-    const indexQuery = (<Query>query().params(params)).filter(rowFilter).toObject()
+    const indexQuery = (query().params(params) as Query).filter(rowFilter).toObject()
     const rows: IQueryResult = await Table.executeQueryOnTable(indexQuery)
     const index = rows.indices[0]
     return index
@@ -50,40 +51,42 @@
     navigateRow(row, index)
   }
 
-  const showDialogColumns = () => dialog.showModal()
+  const showDialogColumns = () => dialog?.showModal()
 
   async function showColumns(columns: string[]) {
     shownColumns = columns
   }
-
-  $: columns = selectedRow ? Object.keys(selectedRow) : []
 </script>
 
 <ShowColumnsDialog bind:dialog {columns} {shownColumns} {showColumns} />
 
 <div class="table-head">
   <div class="currentRow">
-    <button class="arrow-button" title="Previous row" id="left" on:click={() => navigateRows(false)}>
+    <button class="arrow-button" title="Previous row" id="left" onclick={() => navigateRows(false)}>
       <Icon id="arrow-left" width="24px" height="24px" />
     </button>
     <div class="center">
       <table class="table">
-        <tr>
-          {#each shownColumns as column}
-            <th>{column}</th>
-          {/each}
-        </tr>
-        <tr>
-          {#if selectedRow}
+        <thead>
+          <tr>
             {#each shownColumns as column}
-              <td title={selectedRow[column]}>{selectedRow[column]}</td>
+              <th>{column}</th>
             {/each}
-          {/if}
-        </tr>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            {#if selectedRow}
+              {#each shownColumns as column}
+                <td title={selectedRow[column]}>{selectedRow[column]}</td>
+              {/each}
+            {/if}
+          </tr>
+        </tbody>
       </table>
-      <button class="settings" on:click={showDialogColumns}><Icon id="settings" /></button>
+      <button class="settings" onclick={showDialogColumns}><Icon id="settings" /></button>
     </div>
-    <button class="arrow-button" title="Next row" id="right" on:click={() => navigateRows(true)}>
+    <button class="arrow-button" title="Next row" id="right" onclick={() => navigateRows(true)}>
       <Icon id="arrow-right" width="24px" height="24px" />
     </button>
   </div>

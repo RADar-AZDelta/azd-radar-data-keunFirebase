@@ -4,7 +4,6 @@
   import { beforeNavigate, goto } from '$app/navigation'
   import DataTable from '@radar-azdelta/svelte-datatable'
   import BergamotTranslator from '$lib/helpers/BergamotTranslator'
-  import { settings, triggerAutoMapping, disableActions, abortAutoMapping } from '$lib/stores/store'
   import UsagiRow from '$lib/components/mapping/UsagiRow.svelte'
   import AthenaSearch from '$lib/components/mapping/AthenaSearch.svelte'
   import AutoMapping from '$lib/helpers/mapping/AutoMapping'
@@ -18,7 +17,9 @@
   import type { ITableOptions } from '@radar-azdelta/svelte-datatable'
   import type { IUsagiRow } from '$lib/interfaces/Types'
   import Database from '$lib/helpers/Database'
+  import { createAbortAutoMapping, createDisableActions, createSettings, createTriggerAutoMapping } from '$lib/stores/runes.svelte'
 
+  let settings = createSettings()
   let file: File | undefined = $state()
   let customConceptsFile: File | undefined = $state()
   let flaggedConceptsFile: File | undefined = $state()
@@ -35,6 +36,9 @@
   let globalAthenaFilter: { column: string; filter: string | undefined } = $state({ column: 'all', filter: undefined })
   let filesLoaded: boolean = $state(false)
   let syncingComplete: boolean = $state(false)
+  let disableActions = createDisableActions()
+  let abortAutoMapping = createAbortAutoMapping()
+  let triggerAutoMapping = createTriggerAutoMapping()
 
   let customFileId: string | undefined = undefined
   let flaggedFileId: string | undefined = undefined
@@ -55,7 +59,7 @@
     search?.showDialog()
   }
 
-  const translate = async (text: string) => await BergamotTranslator.translate(text, $settings.language)
+  const translate = async (text: string) => await BergamotTranslator.translate(text, settings.value.language)
 
   async function extractCustomConcepts() {
     await CustomTable.extractCustomConcepts()
@@ -63,6 +67,7 @@
   }
 
   async function abortAutoMap() {
+    if (!tableRendered) return
     const rows = await AutoMapping.abortAutoMap()
     if (rows) currentVisibleRows = rows
   }
@@ -133,13 +138,13 @@
   const customTableRenderedComplete = () => (customTableRendered = true)
 
   $effect(() => {
-    if ($abortAutoMapping) abortAutoMap()
+    if (abortAutoMapping.value) abortAutoMap()
   })
 
   $effect(() => {
-    if ($triggerAutoMapping) {
+    if (triggerAutoMapping.value) {
       autoMapPage()
-      $triggerAutoMapping = false
+      triggerAutoMapping.update(false)
     }
   })
 
@@ -171,25 +176,24 @@
     data={file}
     bind:this={Table.table}
     options={tableOptions}
-    on:rendering={abortAutoMap}
-    on:renderingComplete={() => autoMapPage(true)}
+    rendering={abortAutoMap}
+    rendered={() => autoMapPage(true)}
     modifyColumnMetadata={Table.modifyColumnMetadata}
-    let:renderedRow
-    let:columns
-    let:originalIndex
   >
-    <UsagiRow
-      {renderedRow}
-      {columns}
-      index={originalIndex}
-      disabled={$disableActions}
-      bind:currentVisibleRows
-      rowSelection={selectRow}
-      autoMapRow={autoMapSingleRow}
-    />
+    {#snippet rowChild(renderedRow: any, originalIndex: any, index: any, columns: any, option: any)}
+      <UsagiRow
+        {renderedRow}
+        {columns}
+        index={originalIndex}
+        disabled={disableActions.value}
+        bind:currentVisibleRows
+        rowSelection={selectRow}
+        autoMapRow={autoMapSingleRow}
+      />
+    {/snippet}
   </DataTable>
 
-  {#if $settings}
+  {#if settings.value}
     <AthenaSearch {selectedRow} {selectedRowIndex} bind:globalAthenaFilter {navigateRow} bind:this={search} />
   {/if}
 
@@ -198,7 +202,7 @@
       data={customConceptsFile}
       options={Config.customTableOptions}
       modifyColumnMetadata={CustomTable.modifyColumnMetadata}
-      on:renderingComplete={customTableRenderedComplete}
+      rendered={customTableRenderedComplete}
       bind:this={CustomTable.table}
     />
   </div>

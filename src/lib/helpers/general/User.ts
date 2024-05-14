@@ -1,4 +1,4 @@
-import { user } from '$lib/stores/store'
+import { userSessionStore as user } from '@radar-azdelta-int/radar-firebase-utils'
 import type { IUser } from '$lib/interfaces/Types'
 
 export default class User {
