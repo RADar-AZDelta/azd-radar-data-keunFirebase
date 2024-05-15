@@ -1,20 +1,19 @@
 import Config from '$lib/helpers/Config'
 import type { IMappedRows, ISettings } from '$lib/interfaces/Types'
 
+let _settings = $state(Config.defaultSettings)
+let _abortAutomapping = $state(false)
+let _triggerAutoMapping = $state(false)
+let _mappedToConceptIds: IMappedRows = $state({})
+let _disableActions = $state(false)
+
 export function createSettings() {
-  let settings = $state(Config.defaultSettings)
-
-  function updateProp(prop: string, value: any) {
-    settings[prop] = value
-  }
-
-  function update(newSettings: ISettings) {
-    settings = newSettings
-  }
+  const updateProp = (prop: string, value: any) => (_settings[prop] = value)
+  const update = (newSettings: ISettings) => (_settings = newSettings)
 
   return {
     get value() {
-      return settings
+      return _settings
     },
     updateProp,
     update,
@@ -22,60 +21,44 @@ export function createSettings() {
 }
 
 export function createAbortAutoMapping() {
-  let abortAutoMapping = $state(false)
-
-  function update(value: boolean) {
-    abortAutoMapping = value
-  }
+  const update = (value: boolean) => (_abortAutomapping = value)
 
   return {
     get value() {
-      return abortAutoMapping
+      return _abortAutomapping
     },
     update,
   }
 }
 
 export function createTriggerAutoMapping() {
-  let triggerAutoMapping = $state(false)
-
-  function update(value: boolean) {
-    triggerAutoMapping = value
-  }
+  const update = (value: boolean) => (_triggerAutoMapping = value)
 
   return {
     get value() {
-      return triggerAutoMapping
+      return _triggerAutoMapping
     },
     update,
   }
 }
 
 export function createMappedToConceptIds() {
-  let mappedToConceptIds: IMappedRows = $state({})
-
-  function update(value: IMappedRows) {
-    mappedToConceptIds = value
-  }
+  const update = (value: IMappedRows) => (_mappedToConceptIds = value)
 
   return {
     get value() {
-      return mappedToConceptIds
+      return _mappedToConceptIds
     },
     update,
   }
 }
 
 export function createDisableActions() {
-  let disableActions = $state(false)
-
-  function update(value: boolean) {
-    disableActions = value
-  }
+  const update = (value: boolean) => (_disableActions = value)
 
   return {
     get value() {
-      return disableActions
+      return _disableActions
     },
     update,
   }

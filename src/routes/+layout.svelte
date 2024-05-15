@@ -18,7 +18,7 @@
   }
 
   $effect(() => {
-    if ($user) retrieveSettings()
+    if ($user?.uid) retrieveSettings()
   })
 </script>
 

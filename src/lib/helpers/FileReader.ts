@@ -8,7 +8,7 @@ export default class Reader {
   }
 
   static setResult() {
-    if (!this.reader.result) return (this.content = undefined)
+    if (!this.reader?.result) return (this.content = undefined)
     this.content = this.reader.result.toString()
   }
 }

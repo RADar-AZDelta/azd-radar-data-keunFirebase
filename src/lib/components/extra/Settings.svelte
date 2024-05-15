@@ -33,7 +33,6 @@
 
   async function abort() {
     if (!settings.value.autoMap && savedAutomapping !== settings.value.autoMap) abortAutoMapping.update(true)
-
   }
 
   async function outClick() {
