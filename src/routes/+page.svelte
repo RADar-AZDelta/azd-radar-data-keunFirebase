@@ -13,7 +13,6 @@
 
   // TODO: normally everything should be here, but everything needs to be tested!
   // TODO: test the Svelte5 changes
-  // TODO: change the global stores to runes
 
   let files: IFileInformation[] = $state([])
   let file: File | undefined = $state(undefined)

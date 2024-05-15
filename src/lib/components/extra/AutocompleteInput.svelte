@@ -4,83 +4,77 @@
   import clickOutside from '$lib/obsolete/clickOutside'
   import type { IAutoCompleteInputProps } from '$lib/interfaces/NewTypes'
 
-  let { id, list, inputValue = $bindable(), autoComplete }: IAutoCompleteInputProps = $props()
+  // let { id, list = $bindable(), autoComplete }: IAutoCompleteInputProps = $props()
+  export let id: string, list: string[], inputValue: string | null, autoComplete: Function
 
-  // let input: string | null = $state('')
-  let value: string | null = $state('')
-  let key: string = $state('')
-  let filteredValues: string[] = $state([])
-  let autoCompleted: boolean = $state(false)
-  let focus: boolean = $state(false)
-  let suggestionsFocus: boolean = $state(false)
+  // TODO: recreate this component because reactivity doesn't work and I can't find the issue
+
+  let value: string | null = inputValue
+  let autoCompleted: boolean = false
+  let focus: boolean = false
+  let suggestionsFocus: boolean = false
+  let filteredValues: string[ ] = []
+
+  // $: filteredValues = filter(value)
 
   function save(): void {
-    if (!value) return
-    if (!list.includes(value)) return
-    autoComplete(id, value)
+    if (!inputValue) return
+    if (!list.includes(inputValue)) return
+    autoComplete(id, inputValue)
   }
 
   function onClickAutoComplete(e: Event): void {
     const element = e.target as HTMLLIElement
-    ;({ textContent: value, id: key } = element)
+    ;({ textContent: inputValue } = element)
     save()
     autoCompleted = true
   }
 
   // A method to search for suggestions to apply to the input field
-  function filter(input: string | null | undefined): void {
-    filteredValues = []
-    console.log('FILTERING HERE ', input)
-    if (!input) return
-    const pairs = list.filter(findPossibleSuggestions)
-    console.log('PAIRS ', pairs)
-    for (let value of pairs) filteredValues.push(value)
-    filteredValues = filteredValues
+  function filter(input: string | null | undefined) {
+    if (!input) return []
+    const values = list.filter(findPossibleSuggestions)
+    return values
+  }
+
+  function filter2(input: string | null) {
+    filteredValues = list.filter(findPossibleSuggestions)
+    console.log("FILTERED ", filteredValues)
   }
 
   function findPossibleSuggestions(v: string) {
-    if (!value) return
+    if (!inputValue) return
     const lValue = v.toLowerCase()
-    const lInput = value.toLowerCase()
+    const lInput = inputValue.toLowerCase()
     const notEqual = lValue !== lInput
     const including = lValue.includes(lInput)
-    if (notEqual && including) return value
+    if (notEqual && including) return inputValue
   }
 
-  const onInput = debounce(async (e: any) => {
-    autoCompleted = false
-    console.log('INPUT VALUE ', value)
-    filter(value)
-    save()
-  }, 300)
+  // const onInput = debounce(async (e: any) => {
+  //   autoCompleted = false
+  //   filter(value)
+  //   // save()
+  // }, 300)
 
-  // function onInput() {
-  //   console.log(" ON INPUT ")
-  // }
+  const onInput = () => filter2(inputValue)
 
   const focussing = () => (focus = suggestionsFocus = true)
   const nonFocussing = () => (focus = false)
   const outClick = () => (suggestionsFocus = false)
-
-  $effect(() => {
-    // console.log("FILTERING ", inputValue)
-    value
-    filter(value)
-  })
 </script>
 
 <div class="input-container">
-  <input title={id} bind:value oninput={onInput} onfocus={focussing} onfocusout={nonFocussing} />
-  {#if filteredValues.length > 0 && (focus || suggestionsFocus)}
-    <ul use:clickOutside onoutClick={outClick}>
-      {#each filteredValues as suggestion, i}
-        {#if i < 7 && !autoCompleted}
-          <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-          <li id={suggestion} onclick={onClickAutoComplete} onkeydown={onClickAutoComplete}>{suggestion}</li>
-        {/if}
-      {/each}
-    </ul>
-  {/if}
+  <input title={id} bind:value={inputValue} oninput={onInput} onfocus={focussing} onfocusout={nonFocussing} onclick={() => console.log(filteredValues)} />
+  <!-- {#if filteredValues.length && (focus || suggestionsFocus)} -->
+  <ul use:clickOutside onoutClick={outClick}>
+    {#each filteredValues as suggestion, i}
+      {#if i < 7 && !autoCompleted}
+        <li id={suggestion} onclick={onClickAutoComplete} onkeydown={onClickAutoComplete}>{suggestion}</li>
+      {/if}
+    {/each}
+  </ul>
+  <!-- {/if} -->
 </div>
 
 <style>
