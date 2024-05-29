@@ -39,6 +39,7 @@
   "dependencies": {
     "@browsermt/bergamot-translator": "^0.4.9",
     "@radar-azdelta-int/radar-firebase-utils": "^0.0.23",
+    "@radar-azdelta-int/radar-svelte-components": "^0.0.44",
     "@radar-azdelta-int/radar-utils": "^0.0.13",
     "@radar-azdelta/svelte-athena-search": "^0.0.39",
     "@radar-azdelta/svelte-datatable": "^0.0.80",

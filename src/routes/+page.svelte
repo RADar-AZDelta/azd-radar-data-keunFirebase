@@ -155,7 +155,7 @@
 
   .file-list {
     flex: 1 1 auto;
-    overflow-y: auto;
+    overflow-y: hidden;
   }
 
   .file-add {

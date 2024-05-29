@@ -11,6 +11,9 @@ dependencies:
   '@radar-azdelta-int/radar-firebase-utils':
     specifier: ^0.0.23
     version: 0.0.23(codemirror@6.0.1)(firebase@10.11.1)(svelte@5.0.0-next.123)
+  '@radar-azdelta-int/radar-svelte-components':
+    specifier: ^0.0.44
+    version: 0.0.44
   '@radar-azdelta-int/radar-utils':
     specifier: ^0.0.13
     version: 0.0.13(svelte@5.0.0-next.123)
@@ -1021,12 +1024,22 @@ packages:
       - codemirror
     dev: false
 
+  /@radar-azdelta-int/radar-svelte-components@0.0.44:
+    resolution: {integrity: sha512-+q7CYTsxGUCLvmXd2Dh9X8wUU0JrJKrMlqGIxqsYsMk205QRvlExYOq6XLnWFGL23Ovg2roEmi6FlXG7NJQG6A==, tarball: https://europe-west1-npm.pkg.dev/azd-dev-artifacts/azd-d-artifacts-art-euwe1-npmrepo/@radar-azdelta-int/radar-svelte-components/-/@radar-azdelta-int/radar-svelte-components-0.0.44.tgz}
+    dependencies:
+      '@radar-azdelta-int/radar-utils': 0.0.15
+    dev: false
+
   /@radar-azdelta-int/radar-utils@0.0.13(svelte@5.0.0-next.123):
     resolution: {integrity: sha512-Dp8nfnuvFh0lguRPkSxNJzS3wcTEpJyxinjhdIZB18gz0bwFuqkwo+VCDaVpXpa3qVRMPPP/nuQyCy7WHmQETQ==, tarball: https://europe-west1-npm.pkg.dev/azd-dev-artifacts/azd-d-artifacts-art-euwe1-npmrepo/@radar-azdelta-int/radar-utils/-/@radar-azdelta-int/radar-utils-0.0.13.tgz}
     peerDependencies:
       svelte: ^4.0.0
     dependencies:
       svelte: 5.0.0-next.123
+    dev: false
+
+  /@radar-azdelta-int/radar-utils@0.0.15:
+    resolution: {integrity: sha512-4uo6z3hLElzhNXqaqDBsNrrsyHK2zc2aa8a23sjuppiGKSTtfGSjPEl0CUbCne01m6GWiW0tMPNWDsD2+pSxwA==, tarball: https://europe-west1-npm.pkg.dev/azd-dev-artifacts/azd-d-artifacts-art-euwe1-npmrepo/@radar-azdelta-int/radar-utils/-/@radar-azdelta-int/radar-utils-0.0.15.tgz}
     dev: false
 
   /@radar-azdelta-int/radar-utils@0.0.8(svelte@5.0.0-next.123):

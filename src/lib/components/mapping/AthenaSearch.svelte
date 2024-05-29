@@ -7,7 +7,6 @@
   import AthenaActions from './views/AthenaActions.svelte'
   import Config from '$lib/helpers/Config'
   import type { IView } from '@radar-azdelta/svelte-athena-search'
-  import type { IMappedRow } from '$lib/interfaces/Types'
   import Mapping from '$lib/helpers/mapping/Mapping'
   import Table from '$lib/helpers/tables/Table'
   import { localStorageGetter } from '@radar-azdelta-int/radar-utils'
@@ -21,7 +20,6 @@
   const views: IView[] = Config.athenaViews
 
   let dialog: HTMLDialogElement | undefined = $state()
-  let mappedData: (IMappedRow | object)[] = $state([{}])
   let equivalence: string = $state('EQUAL')
   let activatedAthenaFilters = new Map<string, string[]>([['standardConcept', ['Standard']]])
 
@@ -39,16 +37,10 @@
     await Table.saveAllMappedConcepts(selectedRow.sourceCode)
   }
 
-  async function fillMappedTable() {
-    if (!selectedRow?.sourceCode) return
-    mappedData = await Table.getAllMappedConcepts(selectedRow.sourceCode)
-  }
-
   const closeDialog = () => dialog?.close()
 
   export async function showDialog(): Promise<void> {
     dialog?.showModal()
-    fillMappedTable()
   }
 
   function EscapeListener(e: KeyboardEvent) {
@@ -69,7 +61,6 @@
   $effect(() => {
     selectedRowIndex
     getAllMappedToConcepts()
-    fillMappedTable()
   })
 </script>
 

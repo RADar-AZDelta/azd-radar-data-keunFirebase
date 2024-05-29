@@ -16,6 +16,7 @@
   async function loadMappedConcepts() {
     if (!selectedRow.sourceCode) return
     mappedData = await Table.getAllMappedConcepts(selectedRow.sourceCode)
+    console.log("MAPPED DATA ", mappedData)
   }
 
   $effect(() => {

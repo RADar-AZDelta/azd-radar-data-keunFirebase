@@ -31,13 +31,17 @@ export default class Table {
   }
 
   static async getAllMappedConcepts(sourceCode: string) {
+    console.log('GET OF SOURCECODE ', sourceCode)
     const mappedConcepts = await this.getAllMappedConceptsToRow(sourceCode)
+    console.log('RES ', mappedConcepts)
     const mappedRows: (object | IMappedRow)[] = []
     for (const mappedConcept of mappedConcepts.queriedData) {
+      console.log(" IN FOR ")
       if (mappedConcept.conceptId === undefined || mappedConcept.conceptId === null) continue
       const row = await this.transformConceptToRowFormat(mappedConcept)
       if (!mappedRows.includes(row)) mappedRows.push(row)
     }
+    console.log("RETURNING ", mappedRows)
     return mappedRows
   }
 
@@ -60,9 +64,13 @@ export default class Table {
   private static async getAllMappedConceptsToRow(sourceCode: string) {
     const params = { sourceCode, columnsAdded: this.columnsAdded }
     if (!this.columnsAdded) this.columnsAdded = await this.checkIfTableConceptsAreWithNewColumns()
-    const conceptsQuery = (<Query>query().params(params))
-      .filter((r: any, p: any) => (r.sourceCode === p.sourceCode && p.columnsAdded ? r.conceptName : true))
-      .toObject()
+    // const conceptsQuery = (query().params(params) as Query)
+    //   .filter((r: any, p: any) => (r.sourceCode === p.sourceCode && p.columnsAdded ? r.conceptName : true))
+    //   .toObject()
+
+    const conceptsQuery = (query().params(params) as Query).filter((r: any, p: any) => r.sourceCode === p.sourceCode && r.conceptName).toObject()
+
+    // const q = (query().params({ sourceCode: 'AD'}) as Query).filter((r: any, p: any) => r.sourceCode === p.sourceCode).toObject()
     const queryResult = await this.executeQueryOnTable(conceptsQuery)
     return queryResult
   }

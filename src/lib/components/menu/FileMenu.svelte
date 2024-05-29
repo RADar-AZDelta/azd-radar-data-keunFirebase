@@ -4,6 +4,7 @@
   import File from './File.svelte'
   import { userSessionStore as user } from '@radar-azdelta-int/radar-firebase-utils'
   import type { IFileMenuProps } from '$lib/interfaces/NewTypes'
+  import { Pagination, PaginationIntegrated } from '@radar-azdelta-int/radar-svelte-components'
 
   let { files = $bindable(), setProcessing }: IFileMenuProps = $props()
 
@@ -32,9 +33,13 @@
 <Confirm bind:dialog={confirmDialog} title={fileToDelete.name} approveProps={{ id: fileToDelete.id }} approveId="delete" approve={deleteFiles} />
 
 {#if $user && (userIsUser || userIsAdmin)}
-  {#each files as file (file.id)}
-    <File {...file} {confirmFileDeletion} />
-  {/each}
+  <PaginationIntegrated total={files.length} perPageOptions={[5, 10]} perPage={5}>
+    {#snippet child(start: number, end: number)}
+      {#each files.slice(start, end) as file (file.id)}
+        <File {...file} {confirmFileDeletion} />
+      {/each}
+    {/snippet}
+  </PaginationIntegrated>
 {:else}
   <p class="rights-error">You do not have sufficient rights, contact an admin please.</p>
 {/if}

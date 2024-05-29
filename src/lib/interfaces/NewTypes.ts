@@ -144,3 +144,9 @@ export interface IMappedRowProps {
 export interface IMappedViewProps {
   selectedRow: IUsagiRow
 }
+
+
+export interface IAutocompleteProps {
+  id: string
+  list: string[]
+}
