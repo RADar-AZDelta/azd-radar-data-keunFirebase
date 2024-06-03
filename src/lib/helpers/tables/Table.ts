@@ -31,17 +31,13 @@ export default class Table {
   }
 
   static async getAllMappedConcepts(sourceCode: string) {
-    console.log('GET OF SOURCECODE ', sourceCode)
     const mappedConcepts = await this.getAllMappedConceptsToRow(sourceCode)
-    console.log('RES ', mappedConcepts)
     const mappedRows: (object | IMappedRow)[] = []
     for (const mappedConcept of mappedConcepts.queriedData) {
-      console.log(' IN FOR ')
       if (mappedConcept.conceptId === undefined || mappedConcept.conceptId === null) continue
       const row = await this.transformConceptToRowFormat(mappedConcept)
       if (!mappedRows.includes(row)) mappedRows.push(row)
     }
-    console.log('RETURNING ', mappedRows)
     return mappedRows
   }
 

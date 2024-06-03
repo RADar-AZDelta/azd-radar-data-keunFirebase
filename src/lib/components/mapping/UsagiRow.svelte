@@ -37,7 +37,6 @@
   }
 
   async function setPreset() {
-    console.log('SETTING PRESET VALUES')
     if (!renderedRow.matchScore) renderedRow.matchScore = 0
     if (!renderedRow.mappingStatus) renderedRow.mappingStatus = 'UNCHECKED'
     if (!renderedRow.conceptName) renderedRow.conceptName = 'Unmapped'

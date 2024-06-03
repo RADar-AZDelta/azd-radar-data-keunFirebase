@@ -10,7 +10,6 @@
   function autoComplete(e: Event) {
     const element = e.target as HTMLLIElement
     if (!element.textContent) return
-    console.log(element.textContent)
     input = element.textContent.toString()
     update(id, input)
     suggestions = []

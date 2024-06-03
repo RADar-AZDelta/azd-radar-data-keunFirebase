@@ -51,7 +51,6 @@
   async function getFiles() {
     logWhenDev('getFiles: Get all the files in the database')
     const getFilesRes = await Database.getFilesList()
-    console.log('RES ', getFilesRes)
     if (getFilesRes) files = getFilesRes
   }
 

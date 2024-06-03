@@ -15,10 +15,8 @@
   async function loadMappedConcepts() {
     if (!selectedRow.sourceCode) return
     const res = await Table.getAllMappedConcepts(selectedRow.sourceCode)
-    // const res1 = $state(res)
-    // mappedData = res1
+    // TODO: check to optimize this
     await pushRows(res)
-    console.log('MAPPED DATA ', mappedData)
   }
 
   async function pushRows(rows: (object | IMappedRow)[]) {
