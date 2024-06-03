@@ -3,7 +3,7 @@
   import Equivalence from '$lib/components/mapping/details/Equivalence.svelte'
   import AutocompleteInputSettings from '$lib/components/extra/AutocompleteInputSettings.svelte'
   import Icon from '$lib/components/extra/Icon.svelte'
-  import type { IDetailsProps } from '$lib/interfaces/NewTypes'
+  import type { IDetailsProps } from '$lib/interfaces/Types'
 
   let { usagiRow, update, equivalenceUpdate }: IDetailsProps = $props()
 

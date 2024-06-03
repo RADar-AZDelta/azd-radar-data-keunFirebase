@@ -1,10 +1,9 @@
 <script lang="ts">
   import Config from '$lib/helpers/Config'
   import CustomValidation from '$lib/helpers/customRow/CustomValidation'
-  import type { ICustomConceptCompact } from '$lib/interfaces/Types'
   import Database from '$lib/helpers/Database'
   import Icon from '$lib/components/extra/Icon.svelte'
-  import type { IAddRowProps } from '$lib/interfaces/NewTypes'
+  import type { IAddRowProps, ICustomConceptCompact } from '$lib/interfaces/Types'
   import { createSettings } from '$lib/stores/runes.svelte'
   import Autocomplete from '$lib/components/extra/Autocomplete.svelte'
 

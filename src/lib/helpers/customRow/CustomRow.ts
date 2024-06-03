@@ -1,7 +1,7 @@
 import { reformatDate } from '@radar-azdelta-int/radar-utils'
 import CustomTable from '$lib/helpers/tables/CustomTable'
 import MappedConcepts from '$lib/helpers/general/MappedConcepts'
-import Mapping from '../mapping/Mapping'
+import Mapping from '$lib/helpers/mapping/Mapping'
 import type { IAthenaRow, ICustomConcept, ICustomConceptCompact, ICustomConceptInput, IUsagiRow } from '$lib/interfaces/Types'
 
 export default class CustomRow {

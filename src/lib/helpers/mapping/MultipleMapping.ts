@@ -1,8 +1,8 @@
 import { query } from 'arquero'
 import SingleMapping from '$lib/helpers/mapping/SingleMapping'
 import CommonMapping from '$lib/helpers/mapping/CommonMapping'
-import Table from '../tables/Table'
-import MappedConcepts from '../general/MappedConcepts'
+import Table from '$lib/helpers/tables/Table'
+import MappedConcepts from '$lib/helpers/general/MappedConcepts'
 import type Query from 'arquero/dist/types/query/query'
 import type { IAthenaInfo, IMappedRows, IQueryResult, IUsagiRow } from '$lib/interfaces/Types'
 
@@ -49,7 +49,7 @@ export default class MultipleMapping extends CommonMapping {
     const mappedToConceptIds = await MappedConcepts.getMappedConceptsBib()
     if (!this.usagiRow?.sourceCode || this.athenaRow?.id === undefined || this.athenaRow?.id === null) return false
     const conceptKey = await this.getConceptKey()
-    const mappedConcept = mappedToConceptIds[this.usagiRow.sourceCode]?.[conceptKey]
+    const mappedConcept = mappedToConceptIds.value[this.usagiRow.sourceCode]?.[conceptKey]
     return mappedConcept === this.action
   }
 

@@ -3,7 +3,7 @@
   import Config from '$lib/helpers/Config'
   import Athena from '$lib/helpers/athena/Athena'
   import Icon from '$lib/components/extra/Icon.svelte'
-  import type { IAthenaActionsProps } from '$lib/interfaces/NewTypes'
+  import type { IAthenaActionsProps } from '$lib/interfaces/Types'
   import { userSessionStore as user } from '@radar-azdelta-int/radar-firebase-utils'
   import { createMappedToConceptIds } from '$lib/stores/runes.svelte'
 

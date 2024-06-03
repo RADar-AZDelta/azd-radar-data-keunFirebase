@@ -2,10 +2,9 @@
   import { EditableCell } from '@radar-azdelta/svelte-datatable'
   import Config from '$lib/helpers/Config'
   import Usagi from '$lib/helpers/usagi/Usagi'
-  import type { IUsagiInfo, IUsagiRow, MappingEvents } from '$lib/interfaces/Types'
   import { reformatDate } from '@radar-azdelta-int/radar-utils'
-  import Icon from '../extra/Icon.svelte'
-  import type { IUsagiRowProps } from '$lib/interfaces/NewTypes'
+  import Icon from '$lib/components/extra/Icon.svelte'
+  import type { IUsagiRowProps, IUsagiInfo, IUsagiRow } from '$lib/interfaces/Types'
 
   let {
     renderedRow,
@@ -38,7 +37,7 @@
   }
 
   async function setPreset() {
-    console.log("SETTING PRESET VALUES")
+    console.log('SETTING PRESET VALUES')
     if (!renderedRow.matchScore) renderedRow.matchScore = 0
     if (!renderedRow.mappingStatus) renderedRow.mappingStatus = 'UNCHECKED'
     if (!renderedRow.conceptName) renderedRow.conceptName = 'Unmapped'

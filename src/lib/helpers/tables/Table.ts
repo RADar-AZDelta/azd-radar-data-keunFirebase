@@ -1,7 +1,7 @@
 import { query } from 'arquero'
-import MappedConcepts from '../general/MappedConcepts'
-import Config from '../Config'
-import Database from '../Database'
+import MappedConcepts from '$lib/helpers/general/MappedConcepts'
+import Config from '$lib/helpers/Config'
+import Database from '$lib/helpers/Database'
 import type Query from 'arquero/dist/types/query/query'
 import type { IColumnMetaData } from '@radar-azdelta/svelte-datatable'
 import type { IMappedRow, IMappedRows, IQueryResult, IUsagiRow } from '$lib/interfaces/Types'
@@ -36,12 +36,12 @@ export default class Table {
     console.log('RES ', mappedConcepts)
     const mappedRows: (object | IMappedRow)[] = []
     for (const mappedConcept of mappedConcepts.queriedData) {
-      console.log(" IN FOR ")
+      console.log(' IN FOR ')
       if (mappedConcept.conceptId === undefined || mappedConcept.conceptId === null) continue
       const row = await this.transformConceptToRowFormat(mappedConcept)
       if (!mappedRows.includes(row)) mappedRows.push(row)
     }
-    console.log("RETURNING ", mappedRows)
+    console.log('RETURNING ', mappedRows)
     return mappedRows
   }
 

@@ -1,11 +1,10 @@
 <script lang="ts">
   import DataTable, { type ITableOptions } from '@radar-azdelta/svelte-datatable'
-  import MappedRow from './MappedRow.svelte'
+  import MappedRow from '$lib/components/mapping/views/MappedRow.svelte'
   import Table from '$lib/helpers/tables/Table'
   import Config from '$lib/helpers/Config'
-  import type { IMappedRow } from '$lib/interfaces/Types'
-  import type { IMappedViewProps } from '$lib/interfaces/NewTypes'
   import { createMappedToConceptIds } from '$lib/stores/runes.svelte'
+  import type { IMappedViewProps, IMappedRow } from '$lib/interfaces/Types'
 
   let { selectedRow }: IMappedViewProps = $props()
 
@@ -19,12 +18,12 @@
     // const res1 = $state(res)
     // mappedData = res1
     await pushRows(res)
-    console.log("MAPPED DATA ", mappedData)
+    console.log('MAPPED DATA ', mappedData)
   }
 
   async function pushRows(rows: (object | IMappedRow)[]) {
     mappedData.splice(0, mappedData.length)
-    for(let row of rows) mappedData.push(row)
+    for (let row of rows) mappedData.push(row)
   }
 
   $effect(() => {

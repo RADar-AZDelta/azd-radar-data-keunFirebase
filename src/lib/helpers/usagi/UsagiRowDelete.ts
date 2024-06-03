@@ -1,8 +1,8 @@
 import { query } from 'arquero'
 import Config from '$lib/helpers/Config'
-import Table from '../tables/Table'
-import CustomTable from '../tables/CustomTable'
-import MappedConcepts from '../general/MappedConcepts'
+import Table from '$lib/helpers/tables/Table'
+import CustomTable from '$lib/helpers/tables/CustomTable'
+import MappedConcepts from '$lib/helpers/general/MappedConcepts'
 import type Query from 'arquero/dist/types/query/query'
 import type { IExtraUsagiCols, IUsagiAllExtra, IUsagiInfo, IUsagiRow } from '$lib/interfaces/Types'
 

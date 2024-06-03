@@ -1,18 +1,14 @@
 <script lang="ts">
-  import type { SvelteComponent } from 'svelte'
-  import type { IFileInformation } from '$lib/interfaces/Types'
   import ColumnsDialog from '$lib/components/menu/ColumnsDialog.svelte'
   import FileChoiceDialog from '$lib/components/menu/FileChoiceDialog.svelte'
   import FileInputDialog from '$lib/components/menu/FileInputDialog.svelte'
   import FileMenu from '$lib/components/menu/FileMenu.svelte'
   import { logWhenDev } from '@radar-azdelta-int/radar-utils'
   import Database from '$lib/helpers/Database'
-  // import { Spinner } from '@radar-azdelta-int/radar-svelte-components'
-  import Spinner from '$lib/obsolete/Spinner.svelte'
+  import { Spinner } from '@radar-azdelta-int/radar-svelte-components'
   import { userSessionStore as user } from '@radar-azdelta-int/radar-firebase-utils'
-
-  // TODO: normally everything should be here, but everything needs to be tested!
-  // TODO: test the Svelte5 changes
+  import type { SvelteComponent } from 'svelte'
+  import type { IFileInformation } from '$lib/interfaces/Types'
 
   let files: IFileInformation[] = $state([])
   let file: File | undefined = $state(undefined)

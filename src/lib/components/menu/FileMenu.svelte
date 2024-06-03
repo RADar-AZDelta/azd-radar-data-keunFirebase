@@ -1,10 +1,10 @@
 <script lang="ts">
-  import Database from '$lib/helpers/Database'
-  import Confirm from '$lib/obsolete/Confirm.svelte'
-  import File from './File.svelte'
+  import { Confirm } from '@radar-azdelta-int/radar-svelte-components'
+  import { PaginationIntegrated } from '@radar-azdelta-int/radar-svelte-components'
   import { userSessionStore as user } from '@radar-azdelta-int/radar-firebase-utils'
-  import type { IFileMenuProps } from '$lib/interfaces/NewTypes'
-  import { Pagination, PaginationIntegrated } from '@radar-azdelta-int/radar-svelte-components'
+  import File from '$lib/components/menu/File.svelte'
+  import Database from '$lib/helpers/Database'
+  import type { IFileMenuProps } from '$lib/interfaces/Types'
 
   let { files = $bindable(), setProcessing }: IFileMenuProps = $props()
 

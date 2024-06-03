@@ -1,5 +1,5 @@
-import type { ISettings } from '$lib/interfaces/Types'
 import { createSettings } from '$lib/stores/runes.svelte'
+import type { ISettings } from '$lib/interfaces/Types'
 
 export default class Settings {
   static async getLanguage() {

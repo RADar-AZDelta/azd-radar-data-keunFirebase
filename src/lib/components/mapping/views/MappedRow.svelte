@@ -1,7 +1,7 @@
 <script lang="ts">
   import Icon from '$lib/components/extra/Icon.svelte'
   import MappedRow from '$lib/helpers/mappedRow/MappedRow'
-  import type { IMappedRowProps } from '$lib/interfaces/NewTypes'
+  import type { IMappedRowProps } from '$lib/interfaces/Types'
 
   let { renderedRow, usagiRow }: IMappedRowProps = $props()
 

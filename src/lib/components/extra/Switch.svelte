@@ -1,11 +1,11 @@
 <script lang="ts">
-  import type { ISwitchProps } from '$lib/interfaces/NewTypes'
+  import type { ISwitchProps } from '$lib/interfaces/Types'
 
   let { id, name, checked = $bindable(), updateValue }: ISwitchProps = $props()
 
   async function change(e: any) {
     const value = e.target.checked
-    if(updateValue) updateValue(id, value)
+    if (updateValue) updateValue(id, value)
   }
 </script>
 

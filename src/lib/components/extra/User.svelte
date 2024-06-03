@@ -1,8 +1,8 @@
 <script lang="ts">
-  import Auth from '$lib/helpers/Auth'
-  import clickOutside from '$lib/obsolete/clickOutside'
-  import Icon from './Icon.svelte'
+  import { clickOutside } from '@radar-azdelta-int/radar-svelte-components'
   import { userSessionStore as user } from '@radar-azdelta-int/radar-firebase-utils'
+  import Auth from '$lib/helpers/Auth'
+  import Icon from '$lib/components/extra/Icon.svelte'
 
   let userDialog: HTMLDialogElement | undefined = $state(undefined)
 

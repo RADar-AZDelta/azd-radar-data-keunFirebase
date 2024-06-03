@@ -1,9 +1,8 @@
 <script lang="ts">
   import ShowColumnsDialog from '$lib/components/mapping/ShowColumnsDialog.svelte'
-  import Icon from '../extra/Icon.svelte'
-  import type { ISearchHeadProps } from '$lib/interfaces/NewTypes'
+  import Icon from '$lib/components/extra/Icon.svelte'
   import Table from '$lib/helpers/tables/Table'
-  import type { IUsagiRow } from '$lib/interfaces/Types'
+  import type { IUsagiRow, ISearchHeadProps } from '$lib/interfaces/Types'
 
   let { selectedRow, index: currentIndex, navigateRow }: ISearchHeadProps = $props()
 

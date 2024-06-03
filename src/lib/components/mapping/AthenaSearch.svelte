@@ -4,15 +4,15 @@
   import CustomView from '$lib/components/mapping/views/CustomView.svelte'
   import Details from '$lib/components/mapping/details/Details.svelte'
   import MappedView from '$lib/components/mapping/views/MappedView.svelte'
-  import AthenaActions from './views/AthenaActions.svelte'
+  import AthenaActions from '$lib/components/mapping/views/AthenaActions.svelte'
   import Config from '$lib/helpers/Config'
   import type { IView } from '@radar-azdelta/svelte-athena-search'
   import Mapping from '$lib/helpers/mapping/Mapping'
   import Table from '$lib/helpers/tables/Table'
   import { localStorageGetter } from '@radar-azdelta-int/radar-utils'
   import { clickOutside } from '@radar-azdelta-int/radar-svelte-components'
-  import Icon from '../extra/Icon.svelte'
-  import type { IAthenaSearchProps } from '$lib/interfaces/NewTypes'
+  import Icon from '$lib/components/extra/Icon.svelte'
+  import type { IAthenaSearchProps } from '$lib/interfaces/Types'
 
   let { selectedRow, selectedRowIndex, globalAthenaFilter = $bindable(), navigateRow }: IAthenaSearchProps = $props()
 

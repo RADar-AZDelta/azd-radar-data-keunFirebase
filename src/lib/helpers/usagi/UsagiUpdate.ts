@@ -1,4 +1,4 @@
-import Table from '../tables/Table'
+import Table from '$lib/helpers/tables/Table'
 
 export default class UsagiUpdate {
   private static usagiRowIndex: number

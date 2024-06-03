@@ -1,11 +1,11 @@
 import { query } from 'arquero'
 import { PUBLIC_MAPPINGDATA_PATH } from '$env/static/public'
-import Table from '../tables/Table'
-import Settings from '../general/Settings'
-import BergamotTranslator from '../BergamotTranslator'
-import Mapping from './Mapping'
-import type { IAthenaInfo, IAthenaRow, IQueryResult, IUsagiRow } from '$lib/interfaces/Types'
 import { createAbortAutoMapping, createDisableActions } from '$lib/stores/runes.svelte'
+import Table from '$lib/helpers/tables/Table'
+import Settings from '$lib/helpers/general/Settings'
+import BergamotTranslator from '$lib/helpers/BergamotTranslator'
+import Mapping from '$lib/helpers/mapping/Mapping'
+import type { IAthenaInfo, IAthenaRow, IQueryResult, IUsagiRow } from '$lib/interfaces/Types'
 
 export default class AutoMapping {
   private static autoMappingAbortController: AbortController
@@ -93,7 +93,7 @@ export default class AutoMapping {
 
   static async abortAutoMap() {
     if (this.autoMappingPromise) this.autoMappingAbortController.abort()
-    let abortAutoMapping = createAbortAutoMapping()
+    const abortAutoMapping = createAbortAutoMapping()
     abortAutoMapping.update(false)
     const autoMappingTriggered = await this.checkIfTheAutomappingIsTriggered()
     if (!autoMappingTriggered) return
@@ -103,18 +103,18 @@ export default class AutoMapping {
   }
 
   private static async checkIfTheAutomappingIsTriggered() {
-    let disableActions = createDisableActions()
+    const disableActions = createDisableActions()
     return disableActions.value
   }
 
   private static async enableTable() {
-    let disableActions = createDisableActions()
+    const disableActions = createDisableActions()
     disableActions.update(false)
     Table.enableTable()
   }
 
   private static async disableTable() {
-    let disableActions = createDisableActions()
+    const disableActions = createDisableActions()
     if (disableActions.value) return
     disableActions.update(true)
     Table.disableTable()

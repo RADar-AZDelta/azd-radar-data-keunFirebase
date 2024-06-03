@@ -1,6 +1,6 @@
 <script lang="ts">
   import { debounce } from '@radar-azdelta-int/radar-utils'
-  import type { IAutocompleteProps } from '$lib/interfaces/NewTypes'
+  import type { IAutocompleteProps } from '$lib/interfaces/Types'
 
   let { id, list, update }: IAutocompleteProps = $props()
 

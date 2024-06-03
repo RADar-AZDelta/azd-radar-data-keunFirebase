@@ -1,10 +1,9 @@
 <script lang="ts">
   import DataTable, { type IColumnMetaData, type ITableOptions } from '@radar-azdelta/svelte-datatable'
-  import type { ICustomConceptCompact } from '$lib/interfaces/Types'
-  import CustomRow from './customRow/CustomRow.svelte'
+  import CustomRow from '$lib/components/mapping/views/customRow/CustomRow.svelte'
   import Database from '$lib/helpers/Database'
   import Icon from '$lib/components/extra/Icon.svelte'
-  import type { ICustomViewProps } from '$lib/interfaces/NewTypes'
+  import type { ICustomViewProps, ICustomConceptCompact } from '$lib/interfaces/Types'
 
   let { selectedRow, selectedRowIndex, equivalence }: ICustomViewProps = $props()
 

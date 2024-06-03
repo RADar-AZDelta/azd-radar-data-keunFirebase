@@ -1,13 +1,11 @@
 <script lang="ts">
-  import Config from '$lib/helpers/Config'
   import { logWhenDev } from '@radar-azdelta-int/radar-utils'
-  // import { Drop, Spinner } from '@radar-azdelta-int/radar-svelte-components'
-  import Spinner from '$lib/obsolete/Spinner.svelte'
-  import Drop from '$lib/obsolete/Drop.svelte'
-  import Icon from '../extra/Icon.svelte'
-  import type { IFileInputDialogProps } from '$lib/interfaces/NewTypes'
+  import { Spinner, Drop } from '@radar-azdelta-int/radar-svelte-components'
   import { userSessionStore as user } from '@radar-azdelta-int/radar-firebase-utils'
+  import Config from '$lib/helpers/Config'
+  import Icon from '$lib/components/extra/Icon.svelte'
   import Reader from '$lib/helpers/FileReader'
+  import type { IFileInputDialogProps } from '$lib/interfaces/Types'
 
   let { processing = $bindable(), checkForCache, columnsDialogShow }: IFileInputDialogProps = $props()
 

@@ -1,6 +1,6 @@
-import Settings from './Settings'
-import type { IMappedRows, IMappedRowsConcept } from '$lib/interfaces/Types'
 import { createMappedToConceptIds } from '$lib/stores/runes.svelte'
+import Settings from '$lib/helpers/Settings'
+import type { IMappedRows, IMappedRowsConcept } from '$lib/interfaces/Types'
 
 export default class MappedConcepts {
   static async resetMappedConceptsBib() {
@@ -21,7 +21,7 @@ export default class MappedConcepts {
   }
 
   private static addMappedConceptsToBib(currentConcepts: IMappedRows, updatedConcepts: IMappedRows, multipleMapping: boolean) {
-    for (let [sourceCode, conceptIds] of Object.entries(updatedConcepts))
+    for (const [sourceCode, conceptIds] of Object.entries(updatedConcepts))
       currentConcepts = this.addMappedConceptToBib(currentConcepts, sourceCode, conceptIds, multipleMapping)
     return currentConcepts
   }
@@ -35,7 +35,7 @@ export default class MappedConcepts {
       currentConcepts[sourceCode] = concepts
       return currentConcepts
     }
-    for (let [conceptId, mappingStatus] of Object.entries(concepts)) currentConcepts[sourceCode][conceptId] = mappingStatus
+    for (const [conceptId, mappingStatus] of Object.entries(concepts)) currentConcepts[sourceCode][conceptId] = mappingStatus
     return currentConcepts
   }
 

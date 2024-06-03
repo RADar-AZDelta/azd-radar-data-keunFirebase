@@ -1,5 +1,5 @@
-import User from '../general/User'
-import Table from '../tables/Table'
+import User from '$lib/helpers/general/User'
+import Table from '$lib/helpers/tables/Table'
 import type { IAthenaInfo, IAthenaRow, IUsagiRow } from '$lib/interfaces/Types'
 
 export default class CommonMapping {

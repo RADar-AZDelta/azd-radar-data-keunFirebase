@@ -1,7 +1,7 @@
 <script lang="ts">
   import { logWhenDev } from '@radar-azdelta-int/radar-utils'
-  import Icon from '../extra/Icon.svelte'
-  import type { IFileChoiceDialogProps } from '$lib/interfaces/NewTypes'
+  import Icon from '$lib/components/extra/Icon.svelte'
+  import type { IFileChoiceDialogProps } from '$lib/interfaces/Types'
 
   let { processing = $bindable(), currentFileId, fileUpload }: IFileChoiceDialogProps = $props()
 

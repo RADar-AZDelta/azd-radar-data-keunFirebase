@@ -6,7 +6,7 @@
   import CustomValidation from '$lib/helpers/customRow/CustomValidation'
   import type { ICustomConceptCompact } from '$lib/interfaces/Types'
   import Icon from '$lib/components/extra/Icon.svelte'
-  import type { IRowProps } from '$lib/interfaces/NewTypes'
+  import type { IRowProps } from '$lib/interfaces/Types'
   import { userSessionStore as user } from '@radar-azdelta-int/radar-firebase-utils'
   import { createMappedToConceptIds } from '$lib/stores/runes.svelte'
 

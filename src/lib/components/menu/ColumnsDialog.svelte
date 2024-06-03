@@ -1,7 +1,7 @@
 <script lang="ts">
   import { logWhenDev } from '@radar-azdelta-int/radar-utils'
-  import Icon from '../extra/Icon.svelte'
-  import type { IColumnsDialogProps } from '$lib/interfaces/NewTypes'
+  import Icon from '$lib/components/extra/Icon.svelte'
+  import type { IColumnsDialogProps } from '$lib/interfaces/Types'
   import { userSessionStore as user } from '@radar-azdelta-int/radar-firebase-utils'
   import Reader from '$lib/helpers/FileReader'
 

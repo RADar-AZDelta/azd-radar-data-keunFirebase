@@ -4,8 +4,8 @@
   import { logWhenDev } from '@radar-azdelta-int/radar-utils'
   import { userSessionStore } from '@radar-azdelta-int/radar-firebase-utils'
   import Database from '$lib/helpers/Database'
-  import type { IFileTab } from '$lib/interfaces/NewTypes'
-  import Icon from '../extra/Icon.svelte'
+  import type { IFileTab } from '$lib/interfaces/Types'
+  import Icon from '$lib/components/extra/Icon.svelte'
 
   let { id, name, domain, confirmFileDeletion }: IFileTab = $props()
 

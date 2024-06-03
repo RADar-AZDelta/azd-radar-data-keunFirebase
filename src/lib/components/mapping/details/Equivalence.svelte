@@ -1,6 +1,6 @@
 <script lang="ts">
   import Config from '$lib/helpers/Config'
-  import type { IEquivalenceProps } from '$lib/interfaces/NewTypes'
+  import type { IEquivalenceProps } from '$lib/interfaces/Types'
 
   let { equivalenceUpdate }: IEquivalenceProps = $props()
   const change = (e: any) => {

@@ -1,7 +1,7 @@
 <script lang="ts">
   // import { Dialog } from '@radar-azdelta-int/radar-svelte-components'
-  import Dialog from '$lib/obsolete/Dialog.svelte'
-  import type { IShowColumnsDialogProps } from '$lib/interfaces/NewTypes'
+  import { Dialog } from '@radar-azdelta-int/radar-svelte-components'
+  import type { IShowColumnsDialogProps } from '$lib/interfaces/Types'
 
   let { dialog = $bindable(), columns, shownColumns, showColumns }: IShowColumnsDialogProps = $props()
 

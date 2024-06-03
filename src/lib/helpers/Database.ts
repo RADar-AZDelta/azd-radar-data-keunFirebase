@@ -1,10 +1,10 @@
 import { where } from '@radar-azdelta-int/radar-firebase-utils'
 import { FileHelper } from '@radar-azdelta-int/radar-utils'
 import { database, storage } from '$lib/constants/firebase'
-import Config from './Config'
-import CustomTable from './tables/CustomTable'
-import Table from './tables/Table'
-import Mapping from './mapping/Mapping'
+import Config from '$lib/helpers/Config'
+import CustomTable from '$lib/helpers/tables/CustomTable'
+import Table from '$lib/helpers/tables/Table'
+import Mapping from '$lib/helpers/mapping/Mapping'
 import type { ICustomConceptCompact, IFile, IFirestoreFile, IStorageCustomMetadata, IStorageMetadata } from '$lib/interfaces/Types'
 
 export default class Database {

@@ -1,9 +1,9 @@
 <script lang="ts">
-  import Switch from '$lib/components/extra/Switch.svelte'
+  import { clickOutside } from '@radar-azdelta-int/radar-svelte-components'
   import Config from '$lib/helpers/Config'
   import Settings from '$lib/helpers/Settings'
-  import clickOutside from '$lib/obsolete/clickOutside'
-  import Icon from './Icon.svelte'
+  import Icon from '$lib/components/extra/Icon.svelte'
+  import Switch from '$lib/components/extra/Switch.svelte'
   import { createAbortAutoMapping, createSettings, createTriggerAutoMapping } from '$lib/stores/runes.svelte'
 
   let settings = createSettings()
