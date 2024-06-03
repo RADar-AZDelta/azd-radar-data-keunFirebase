@@ -9,9 +9,10 @@ export default class MappedConcepts {
   }
 
   static async updateMappedConceptsBib(updatedConcept: IMappedRows) {
-    const multipleMapping = await Settings.getMappingToMultiple()
+    const settings = await Settings.getSettings()
+    const { mapToMultipleConcepts } = settings
     const mappedToConceptIds = await this.getMappedConceptsBib()
-    mappedToConceptIds.update(this.addMappedConceptsToBib(mappedToConceptIds.value, updatedConcept, multipleMapping))
+    mappedToConceptIds.update(this.addMappedConceptsToBib(mappedToConceptIds.value, updatedConcept, mapToMultipleConcepts))
   }
 
   static async deleteConceptInMappedConceptsBib(sourceCode: string, conceptName?: string | null, conceptId?: number | null, custom: boolean = false) {
