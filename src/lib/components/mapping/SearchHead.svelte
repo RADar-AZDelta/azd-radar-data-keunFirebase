@@ -1,54 +1,20 @@
 <script lang="ts">
-  import { query } from 'arquero'
   import ShowColumnsDialog from '$lib/components/mapping/ShowColumnsDialog.svelte'
-  import Table from '$lib/helpers/tables/Table'
-  import type Query from 'arquero/dist/types/query/query'
-  import type { IQueryResult, IUsagiRow } from '$lib/interfaces/Types'
   import Icon from '../extra/Icon.svelte'
   import type { ISearchHeadProps } from '$lib/interfaces/NewTypes'
+  import Table from '$lib/helpers/tables/Table'
+  import type { IUsagiRow } from '$lib/interfaces/Types'
 
-  let { selectedRow, navigateRow }: ISearchHeadProps = $props()
+  let { selectedRow, index: currentIndex, navigateRow }: ISearchHeadProps = $props()
 
   let dialog: HTMLDialogElement | undefined = $state()
   let shownColumns: string[] = $state(['sourceCode', 'sourceName', 'sourceFrequency'])
   let columns = $derived(selectedRow ? Object.keys(selectedRow) : [])
 
-  async function getPagination() {
-    const { currentPage } = await Table.getTablePagination()
-    return currentPage ?? 0
-  }
-
-  function rowFilter(row: IUsagiRow, params: Record<string, string>) {
-    const sourceCodeEqual = row.sourceCode === params.sourceCode
-    const sourceNameEqual = row.sourceName === params.sourceName
-    const conceptNameEqual = row.conceptName === params.conceptName || row.conceptName === params.conceptName2
-    return sourceCodeEqual && sourceNameEqual && conceptNameEqual
-  }
-
-  async function getCurrentRowIndex() {
-    const { sourceCode, sourceName, conceptName: concept } = selectedRow
-    const conceptName = concept === 'Unmapped' ? undefined : concept
-    const conceptName2 = concept === 'Unmapped' ? null : concept
-    const params = { sourceCode, sourceName, conceptName, conceptName2 }
-    const indexQuery = (query().params(params) as Query).filter(rowFilter).toObject()
-    const rows: IQueryResult = await Table.executeQueryOnTable(indexQuery)
-    const index = rows.indices[0]
-    return index
-  }
-
-  async function getFollowingRow(up: boolean, currentRowIndex: number) {
-    const rowResult = up ? await Table.getNextRow(currentRowIndex) : await Table.getPreviousRow(currentRowIndex)
-    const { row, index, page } = rowResult
-    return { row, index, page }
-  }
-
   async function navigateRows(up: boolean) {
-    const rowIndex = await getCurrentRowIndex()
-    const { row, index, page } = await getFollowingRow(up, rowIndex)
-    if (!row.sourceCode) return
-    const currentPage = await getPagination()
-    if (currentPage !== page) Table.changePagination(page)
-    navigateRow(row, index)
+    const rowInfo = up ? await Table.getNextRow(currentIndex) : await Table.getPreviousRow(currentIndex)
+    const { row, index } = rowInfo
+    navigateRow(row as IUsagiRow, index)
   }
 
   const showDialogColumns = () => dialog?.showModal()

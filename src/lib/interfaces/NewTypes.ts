@@ -69,6 +69,7 @@ export interface IAthenaSearchProps {
 
 export interface ISearchHeadProps {
   selectedRow: IUsagiRow
+  index: number
   navigateRow: (row: IUsagiRow, index: number) => Promise<void>
 }
 

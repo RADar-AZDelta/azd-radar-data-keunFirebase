@@ -1,5 +1,5 @@
 <script lang="ts">
-  import debounce from 'lodash.debounce'
+  import { debounce } from '@radar-azdelta-int/radar-utils'
   import Settings from '$lib/helpers/Settings'
   import type { IAutoCompleteSettingsProps } from '$lib/interfaces/NewTypes'
   import { createSettings } from '$lib/stores/runes.svelte'

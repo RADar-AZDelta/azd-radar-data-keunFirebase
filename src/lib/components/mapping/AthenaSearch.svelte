@@ -76,7 +76,7 @@
           {/snippet}
           {#snippet upperChild()}
             <div>
-              <SearchHead {selectedRow} {navigateRow} />
+              <SearchHead {selectedRow} index={selectedRowIndex} {navigateRow} />
             </div>
           {/snippet}
           {#snippet firstView()}

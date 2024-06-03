@@ -1,5 +1,5 @@
 <script lang="ts">
-  import debounce from 'lodash.debounce'
+  import { debounce } from '@radar-azdelta-int/radar-utils'
   import Equivalence from '$lib/components/mapping/details/Equivalence.svelte'
   import AutocompleteInputSettings from '$lib/components/extra/AutocompleteInputSettings.svelte'
   import Icon from '$lib/components/extra/Icon.svelte'
