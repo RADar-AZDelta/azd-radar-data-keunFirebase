@@ -1,12 +1,12 @@
 <script lang="ts">
   import Config from '$lib/helpers/Config'
   import CustomValidation from '$lib/helpers/customRow/CustomValidation'
-  import AutocompleteInput from '$lib/components/extra/AutocompleteInput.svelte'
   import type { ICustomConceptCompact } from '$lib/interfaces/Types'
   import Database from '$lib/helpers/Database'
   import Icon from '$lib/components/extra/Icon.svelte'
   import type { IAddRowProps } from '$lib/interfaces/NewTypes'
   import { createSettings } from '$lib/stores/runes.svelte'
+  import Autocomplete from '$lib/components/extra/Autocomplete.svelte'
 
   let { columns, originalIndex, renderedRow, updateError, addCustomConcept }: IAddRowProps = $props()
 
@@ -29,8 +29,7 @@
   }
 
   async function resetInputRow() {
-    if (originalIndex !== 0) return (inputRow = {})
-    inputRow = { ...renderedRow, ...{ vocabulary_id: settings.value.vocabularyIdCustomConcept ?? '' } }
+    if (originalIndex !== 0) return
     updateVocab()
   }
 
@@ -40,10 +39,6 @@
   }
 
   const updateVocab = () => (inputRow.vocabulary_id = settings.value.vocabularyIdCustomConcept ?? '')
-
-  $effect(() => {
-    if (settings.value.vocabularyIdCustomConcept) updateVocab()
-  })
 
   $effect(() => {
     resetInputRow()
@@ -57,7 +52,7 @@
   <td>
     <div class="cell-container">
       {#if autoCompleteColumns.includes(id)}
-        <AutocompleteInput {id} {list} bind:inputValue={inputRow[column.id]} autoComplete={autoCompleteRow} />
+        <Autocomplete {id} {list} update={autoCompleteRow} />
       {:else}
         <input bind:value={inputRow[column.id]} />
       {/if}

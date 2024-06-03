@@ -10,8 +10,7 @@
   import Mapping from '$lib/helpers/mapping/Mapping'
   import Table from '$lib/helpers/tables/Table'
   import { localStorageGetter } from '@radar-azdelta-int/radar-utils'
-  // import { clickOutside } from '@radar-azdelta-int/radar-svelte-components'
-  import clickOutside from '$lib/obsolete/clickOutside'
+  import { clickOutside } from '@radar-azdelta-int/radar-svelte-components'
   import Icon from '../extra/Icon.svelte'
   import type { IAthenaSearchProps } from '$lib/interfaces/NewTypes'
 

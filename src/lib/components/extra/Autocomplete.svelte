@@ -1,26 +1,42 @@
 <script lang="ts">
+  import { debounce } from '@radar-azdelta-int/radar-utils'
   import type { IAutocompleteProps } from '$lib/interfaces/NewTypes'
 
-  let { id, list }: IAutocompleteProps = $props()
+  let { id, list, update }: IAutocompleteProps = $props()
 
-  let input: string = $state('')
-  let suggestions: string[] = $state([])
+  let input = $state<string>()
+  let suggestions = $state<string[]>([])
 
-  function setSuggestions(input: string) {
-    if (!input) return
-    suggestions = list.filter(item => item.toLowerCase().includes(input.toLowerCase()) && item.toLowerCase() !== input.toLowerCase())
+  function autoComplete(e: Event) {
+    const element = e.target as HTMLLIElement
+    if (!element.textContent) return
+    console.log(element.textContent)
+    input = element.textContent.toString()
+    update(id, input)
+    suggestions = []
   }
 
-  $effect(() => {
+  const setSuggestions = debounce((input: string) => {
+    suggestions.splice(0, suggestions.length)
+    if (!input) return
+    const newSuggestions = list.filter(item => item.toLowerCase().includes(input.toLowerCase()) && item.toLowerCase() !== input.toLowerCase())
+    suggestions = [...newSuggestions]
+  }, 300)
+
+  async function updateInput(e: Event) {
+    input = (e.target as any).value
+    if (!input) return
     setSuggestions(input)
-  })
+    update(id, input)
+  }
 </script>
 
 <div class="input-container">
-  <input title={id} bind:value={input} />
-  <ul>
-    {#each suggestions as suggestion, i}
-      <li id={suggestion}>{suggestion}</li>
+  <input title={id} oninput={updateInput} bind:value={input} />
+  <ul class="list-container">
+    {#each suggestions as suggestion, _}
+      <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+      <li id={suggestion} onclick={autoComplete} onkeydown={autoComplete}>{suggestion}</li>
     {/each}
   </ul>
 </div>
@@ -74,4 +90,12 @@
     outline: none;
     box-shadow: 0 0 0 2px #c5c5c5;
   }
+
+  /* .list-container {
+    height: 100px;
+    width: 200px;
+    border: 1px solid black;
+    z-index: 100;
+    background-color: white;
+  } */
 </style>
