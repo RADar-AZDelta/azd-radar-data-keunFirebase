@@ -26,7 +26,6 @@
   })
 </script>
 
-<!-- <button title="Author" aria-label="User button" on:click={openDialog} class="header-button"> -->
 <button title="Author" aria-label="User button" onclick={openDialog} class="header-button">
   <p>{$user?.name ?? ''}</p>
   <Icon id="user" />

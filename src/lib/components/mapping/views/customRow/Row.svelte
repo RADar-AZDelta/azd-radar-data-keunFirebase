@@ -21,8 +21,7 @@
   const approveRow = async () => await row.mapCustomConcept('APPROVED', equivalence)
   const setRow = async () => (row = new CustomRow(renderedRow as ICustomConceptCompact, usagiRow, usagiRowIndex))
 
-  async function updateCustomConcept(e: CustomEvent, columnId: string) {
-    const value = e.detail
+  async function updateCustomConcept(value: string, columnId: string) {
     const editedRow = { ...renderedRow, ...{ [columnId]: value } }
     const result = await CustomValidation.validateRow(editedRow).catch(error => updateError(error))
     if (result) return (renderedRow[columnId] = renderedRow[columnId])
@@ -84,7 +83,7 @@
   </td>
   {#each columns as column, _}
     <td title={renderedRow[column.id]}>
-      <EditableCell value={renderedRow[column.id]} on:valueChanged={e => updateCustomConcept(e, column.id)} />
+      <EditableCell value={renderedRow[column.id]} changeValue={(value: string) => updateCustomConcept(value, column.id)} />
     </td>
   {/each}
 {/if}
