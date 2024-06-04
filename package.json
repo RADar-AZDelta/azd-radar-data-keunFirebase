@@ -42,7 +42,7 @@
     "@radar-azdelta-int/radar-svelte-components": "^0.0.44",
     "@radar-azdelta-int/radar-utils": "^0.0.16",
     "@radar-azdelta/svelte-athena-search": "^0.0.43",
-    "@radar-azdelta/svelte-datatable": "^0.0.82",
+    "@radar-azdelta/svelte-datatable": "^0.0.85",
     "arquero": "5.2.0"
   }
 }

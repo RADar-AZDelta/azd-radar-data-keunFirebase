@@ -50,6 +50,10 @@
     globalAthenaFilter.filter = await translate(selectedRow.sourceName)
   }
 
+  async function updateCurrentVisibleRows(currentPage: number, rowsPerPage: number) {
+    currentVisibleRows.clear()
+  }
+
   async function autoMapSingleRow(index: number, sourceName: string) {
     await AutoMapping.startAutoMappingRow(index, selectedDomain)
   }
@@ -169,7 +173,8 @@
 </svelte:head>
 
 {#if file}
-  <button onclick={syncFile}>Save</button>
+  <!-- <button onclick={syncFile}>Save</button> -->
+  <button onclick={() => console.log(currentVisibleRows)}>Save</button>
   <button onclick={downloadPage}>Download</button>
   <button onclick={approvePage}>Approve page</button>
   <DataTable
@@ -179,6 +184,7 @@
     rendering={abortAutoMap}
     rendered={() => autoMapPage(true)}
     modifyColumnMetadata={Table.modifyColumnMetadata}
+    paginationChanged={updateCurrentVisibleRows}
   >
     {#snippet rowChild(renderedRow: any, originalIndex: any, index: any, columns: any, option: any)}
       <UsagiRow
