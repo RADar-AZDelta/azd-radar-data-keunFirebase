@@ -33,6 +33,8 @@ export default class CustomTable {
   }
 
   static async extractCustomConcepts() {
+    // console.log("EXTRACT :)")
+    if (this.customTableWasFilled) return
     const columnsAreAdded = await this.checkIfColumnsAreAdded()
     if (!columnsAreAdded) return
     const customQuery = query()
@@ -40,11 +42,12 @@ export default class CustomTable {
       .toObject()
     const concepts = await Table.executeQueryOnTable(customQuery)
     if (!concepts?.indices?.length) return
-    const testRow = await this.getCustomTableRow(0)
-    if (!testRow?.domain_id) await this.deleteCustomTableRows([0])
     await this.deleteFullTable()
     for (const concept of concepts.queriedData) await this.addCustomConceptToTable(concept)
+    const testRow = await this.getCustomTableRow(0)
+    if (!testRow?.domain_id) await this.deleteCustomTableRows([0])
     await this.deleteFirstEmptyConceptIfNeeded()
+    this.customTableWasFilled = true
   }
 
   private static async checkIfColumnsAreAdded() {
@@ -74,18 +77,16 @@ export default class CustomTable {
   }
 
   static async deleteFirstEmptyConceptIfNeeded() {
-    if (!this.firstRowIsEmpty) return (this.customTableWasFilled = true)
+    if (!this.firstRowIsEmpty) return
     const emptyConceptQuery = query().slice(0, 1).toObject()
     const firstConceptRes = await this.executeQueryOnCustomTable(emptyConceptQuery)
     const firstConcept = firstConceptRes.queriedData[0]
     if (firstConcept.concept_name) {
       this.firstRowIsEmpty = false
-      this.customTableWasFilled = true
       return
     }
     await this.deleteCustomTableRows([0])
     this.firstRowIsEmpty = false
-    this.customTableWasFilled = false
   }
 
   private static async deleteFullTable() {

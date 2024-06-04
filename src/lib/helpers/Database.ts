@@ -263,7 +263,16 @@ export default class Database {
   }
 
   static async getCustomKeunFile(id: string) {
-    return await this.readFileFromCollection(id, this.storageCustomColl)
+    const custom = await this.readFileFromCollection(id, this.storageCustomColl)
+    if (!custom) return
+    const { file, name } = custom
+    if (!file) return
+    const originalJSON = await FileHelper.csvToJson(file)
+    if (originalJSON.length) return custom
+    const newFile = 'concept_id,concept_name,domain_id,vocabulary_id,concept_class_id,standard_concept,concept_code,valid_start_date,valid_end_date,invalid_reason\ntest,test,test,test,test,test,test,test,test,test'
+    const createdFile = await FileHelper.createFileFromString(newFile, name, 'text/csv')
+    custom.file = createdFile
+    return custom
   }
 
   static async getFlaggedFile(id: string) {

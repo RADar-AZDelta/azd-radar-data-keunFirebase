@@ -18,6 +18,7 @@
   import type { IUsagiRow } from '$lib/interfaces/Types'
   import Database from '$lib/helpers/Database'
   import { createAbortAutoMapping, createDisableActions, createSettings, createTriggerAutoMapping } from '$lib/stores/runes.svelte'
+  import { FileHelper } from '@radar-azdelta-int/radar-utils'
 
   let settings = createSettings()
   let file: File | undefined = $state()
@@ -91,7 +92,6 @@
     if (!tableRendered && !rendered) return
     tableRendered = true
     if (!tablePrepared) await prepareFile()
-    if (!customsExtracted && rendered) await extractCustomConcepts()
     await AutoMapping.autoMapPage(selectedDomain)
   }
 
@@ -145,12 +145,11 @@
     await FlaggedTable.syncFile(selectedFileId)
   }
 
-  const customTableRenderedComplete = () => (customTableRendered = true)
-
-  // const customTableRenderedComplete = () => {
-  //   customTableRendered = true
-  //   extractCustomConcepts()
-  // }
+  const customTableRenderedComplete = () => {
+    if(customTableRendered) return
+    customTableRendered = true
+    extractCustomConcepts()
+  }
 
   $effect(() => {
     if (abortAutoMapping.value) abortAutoMap()
@@ -184,7 +183,6 @@
 </svelte:head>
 
 {#if file}
-  <!-- <button onclick={syncFile}>Save</button> -->
   <button onclick={syncFile}>Save</button>
   <button onclick={downloadPage}>Download</button>
   <button onclick={approvePage}>Approve page</button>
@@ -215,13 +213,13 @@
   {/if}
 
   <div class="hidden">
-    <DataTable
-      data={customConceptsFile}
-      options={Config.customTableOptions}
-      modifyColumnMetadata={CustomTable.modifyColumnMetadata}
-      rendered={customTableRenderedComplete}
-      bind:this={CustomTable.table}
-    />
+  <DataTable
+    data={customConceptsFile}
+    options={Config.customTableOptions}
+    modifyColumnMetadata={CustomTable.modifyColumnMetadata}
+    rendered={customTableRenderedComplete}
+    bind:this={CustomTable.table}
+  />
   </div>
 
   <div class="hidden">
