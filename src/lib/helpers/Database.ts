@@ -15,6 +15,7 @@ export default class Database {
   private static firestoreFileColl: string = 'files'
   private static storageCustomColl: string = 'Keun-custom-files'
   private static storageFlaggedColl: string = 'Keun-flagged-files'
+  private static customConcepts: ICustomConceptCompact[] = []
 
   static async checkIfCustomConceptAlreadyExists(row: ICustomConceptCompact) {
     const { concept_name, concept_class_id, domain_id, vocabulary_id } = row
@@ -35,7 +36,12 @@ export default class Database {
   }
 
   static async addCustomConcept(concept: ICustomConceptCompact) {
+    if (!this.customConcepts.length) await this.getCustomConcepts()
     const { concept_name, concept_class_id, domain_id, vocabulary_id } = concept
+    const checkIfCustomExists = this.customConcepts.some(
+      c => c.concept_name === concept_name && c.concept_class_id === concept_class_id && c.domain_id === domain_id && c.vocabulary_id === vocabulary_id,
+    )
+    if (checkIfCustomExists) return
     const recordName = `${concept_name}-${domain_id.replaceAll('/', '')}-${concept_class_id.replaceAll('/', '')}-${vocabulary_id}`
     await this.database.writeToFirestore(this.customConceptsCollection, recordName, concept)
   }
@@ -65,6 +71,7 @@ export default class Database {
     const concepts = await this.database.readFirestoreCollection(this.customConceptsCollection)
     if (!concepts) return []
     const customConcepts = concepts.docs.map(doc => doc.data())
+    this.customConcepts = customConcepts as ICustomConceptCompact[]
     return customConcepts
   }
 
@@ -269,7 +276,8 @@ export default class Database {
     if (!file) return
     const originalJSON = await FileHelper.csvToJson(file)
     if (originalJSON.length) return custom
-    const newFile = 'concept_id,concept_name,domain_id,vocabulary_id,concept_class_id,standard_concept,concept_code,valid_start_date,valid_end_date,invalid_reason\ntest,test,test,test,test,test,test,test,test,test'
+    const newFile =
+      'concept_id,concept_name,domain_id,vocabulary_id,concept_class_id,standard_concept,concept_code,valid_start_date,valid_end_date,invalid_reason\ntest,test,test,test,test,test,test,test,test,test'
     const createdFile = await FileHelper.createFileFromString(newFile, name, 'text/csv')
     custom.file = createdFile
     return custom

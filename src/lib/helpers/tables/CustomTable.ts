@@ -71,7 +71,6 @@ export default class CustomTable {
       invalid_reason: '',
     }
     const { concept_name, concept_class_id, vocabulary_id, domain_id } = custom
-    // TODO: this will overwrite all custom concepts, optimize this in the future for less requests to the database
     await Database.addCustomConcept({ concept_name, concept_class_id, vocabulary_id, domain_id })
     await this.insertCustomTableRow(custom)
   }
