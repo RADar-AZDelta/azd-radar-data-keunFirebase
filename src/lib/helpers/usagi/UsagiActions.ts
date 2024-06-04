@@ -58,7 +58,7 @@ export default class UsagiActions {
     const { mappingStatus } = this.usagiRow
     const rowIsFlagged = mappingStatus === 'FLAGGED'
     if (rowIsFlagged) return {}
-    return { statusSetBy: user.name, statusSetOn: new Date(), mappingStatus: 'FLAGGED' }
+    return { statusSetBy: user.name, statusSetOn: Date.now(), mappingStatus: 'FLAGGED' }
   }
 
   private static async checkUnapprovalConditionsAndReturnUpdate() {
@@ -67,6 +67,6 @@ export default class UsagiActions {
     const { mappingStatus } = this.usagiRow
     const rowIsUnapproved = mappingStatus === 'UNAPPROVED'
     if (rowIsUnapproved) return {}
-    return { statusSetBy: user.name, statusSetOn: new Date(), mappingStatus: 'UNAPPROVED' }
+    return { statusSetBy: user.name, statusSetOn: Date.now(), mappingStatus: 'UNAPPROVED' }
   }
 }

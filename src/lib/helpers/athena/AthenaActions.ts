@@ -13,7 +13,7 @@ export default class AthenaActions {
     await this.setVars(athenaRow, usagiRow, usagiRowIndex)
     if (!this.usagiRow.sourceCode || this.usagiRow.mappingStatus === 'SEMI-APPROVED') return
     const user = await User.getUser()
-    const updatedProperties = { statusSetBy: user.name, statusSetOn: new Date(), mappingStatus: 'APPROVED' }
+    const updatedProperties = { statusSetBy: user.name, statusSetOn: Date.now(), mappingStatus: 'APPROVED' }
     await MappedConcepts.updateMappedConceptsBib({
       [this.usagiRow.sourceCode]: {
         [this.athenaRow.id]: 'APPROVED',
