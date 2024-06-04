@@ -18,8 +18,8 @@ dependencies:
     specifier: ^0.0.16
     version: 0.0.16
   '@radar-azdelta/svelte-athena-search':
-    specifier: ^0.0.39
-    version: 0.0.39(@sveltejs/vite-plugin-svelte@3.1.0)(svelte@5.0.0-next.143)(vite@5.2.11)
+    specifier: ^0.0.43
+    version: 0.0.43(@sveltejs/vite-plugin-svelte@3.1.0)(svelte@5.0.0-next.143)(vite@5.2.11)
   '@radar-azdelta/svelte-datatable':
     specifier: ^0.0.82
     version: 0.0.82(@sveltejs/vite-plugin-svelte@3.1.0)(svelte@5.0.0-next.143)(vite@5.2.11)
@@ -1059,10 +1059,10 @@ packages:
       svelte: 5.0.0-next.143
     dev: false
 
-  /@radar-azdelta/svelte-athena-search@0.0.39(@sveltejs/vite-plugin-svelte@3.1.0)(svelte@5.0.0-next.143)(vite@5.2.11):
-    resolution: {integrity: sha512-Ml5X88OGC/sCPM/odlah5zei5uivMUxO4RrCRCkyJYbhrTphaL0WhmHznp/GHpQgjRINmzT1HVvMeggEhL6Fkg==}
+  /@radar-azdelta/svelte-athena-search@0.0.43(@sveltejs/vite-plugin-svelte@3.1.0)(svelte@5.0.0-next.143)(vite@5.2.11):
+    resolution: {integrity: sha512-FzbMdU0defYbVEi8nkwtenCgBW07+bgxDZkZGlCIpx68W7gOhukx/9Ut9Inm9RZfYoCHn1+pY2xHtA71Soo3Kw==}
     dependencies:
-      '@radar-azdelta/svelte-datatable': 0.0.80(@sveltejs/vite-plugin-svelte@3.1.0)(svelte@5.0.0-next.143)(vite@5.2.11)
+      '@radar-azdelta/svelte-datatable': 0.0.84(@sveltejs/vite-plugin-svelte@3.1.0)(svelte@5.0.0-next.143)(vite@5.2.11)
       '@sveltejs/kit': 2.5.8(@sveltejs/vite-plugin-svelte@3.1.0)(svelte@5.0.0-next.143)(vite@5.2.11)
     transitivePeerDependencies:
       - '@sveltejs/vite-plugin-svelte'
@@ -1071,8 +1071,8 @@ packages:
       - vite
     dev: false
 
-  /@radar-azdelta/svelte-datatable@0.0.80(@sveltejs/vite-plugin-svelte@3.1.0)(svelte@5.0.0-next.143)(vite@5.2.11):
-    resolution: {integrity: sha512-niE+0CzDHZ7c590GPbtdnTDlUeFAy9o2SNaaMjrgWbuVn7dYToFLe38shpWfz5AshQ12mnLYXocUwDk+tEvE8A==}
+  /@radar-azdelta/svelte-datatable@0.0.82(@sveltejs/vite-plugin-svelte@3.1.0)(svelte@5.0.0-next.143)(vite@5.2.11):
+    resolution: {integrity: sha512-GcktU54olsj/d0TmW2ixxe03OPKS2+eynd/tvmGSSu/SZJR54zSoHkZee0OD60NvAIo3LDZ2hvNBRcxzx+ChBA==}
     dependencies:
       '@sveltejs/kit': 2.5.8(@sveltejs/vite-plugin-svelte@3.1.0)(svelte@5.0.0-next.143)(vite@5.2.11)
       arquero: 5.4.0
@@ -1085,8 +1085,8 @@ packages:
       - vite
     dev: false
 
-  /@radar-azdelta/svelte-datatable@0.0.82(@sveltejs/vite-plugin-svelte@3.1.0)(svelte@5.0.0-next.143)(vite@5.2.11):
-    resolution: {integrity: sha512-GcktU54olsj/d0TmW2ixxe03OPKS2+eynd/tvmGSSu/SZJR54zSoHkZee0OD60NvAIo3LDZ2hvNBRcxzx+ChBA==}
+  /@radar-azdelta/svelte-datatable@0.0.84(@sveltejs/vite-plugin-svelte@3.1.0)(svelte@5.0.0-next.143)(vite@5.2.11):
+    resolution: {integrity: sha512-SBZDkG6IkinwuI6WqvdgFni95XKyARq/FPgjINU6rWJk/EK0XLe9jNWwDUjVdp8atJzBxf96F/vVGaMVciBJYw==}
     dependencies:
       '@sveltejs/kit': 2.5.8(@sveltejs/vite-plugin-svelte@3.1.0)(svelte@5.0.0-next.143)(vite@5.2.11)
       arquero: 5.4.0

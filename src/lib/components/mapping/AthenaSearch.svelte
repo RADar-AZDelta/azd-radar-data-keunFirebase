@@ -61,6 +61,11 @@
     selectedRowIndex
     getAllMappedToConcepts()
   })
+
+  $effect(() => {
+    // Small hack to rerender table because on init of Search comp, it searches athena without filter
+    globalAthenaFilter.filter = (globalAthenaFilter.filter ?? 'tes').toString()
+  })
 </script>
 
 <dialog bind:this={dialog} class="athena-dialog">
@@ -68,7 +73,7 @@
     <button class="close-dialog" onclick={closeDialog}><Icon id="x" /></button>
     <section class="search-container">
       {#if selectedRow}
-        <Search {views} bind:globalFilter={globalAthenaFilter} showFilters={true}>
+        <Search {views} bind:globalFilter={globalAthenaFilter} showFilters={true} limitedFilters={Config.limitedFilters}>
           {#snippet actionChild(renderedRow: any)}
             <div class="actions-grid">
               <AthenaActions {renderedRow} {selectedRow} {selectedRowIndex} {equivalence} />

@@ -23,5 +23,17 @@
   ],
   "customBlobInitial": "concept_id,concept_name,domain_id,vocabulary_id,concept_class_id,standard_concept,concept_code,valid_start_date,valid_end_date,invalid_reason\n,,,,,,,,,",
   "flaggedBlobInitial": "sourceCode,sourceName,sourceFrequency,conceptId,sourceAutoAssignedConceptIds,conceptName,mappingStatus,domainId,vocabularyId,className,matchScore,equivalence,statusSetBy,statusSetOn,mappingType,comment,createdBy,createdOn,assignedReviewer,ADD_INFO:approvedBy,ADD_INFO:approvedOn,ADD_INFO:numberOfConcepts,ADD_INFO:customConcept,ADD_INFO:lastAthenaFilter\n,,,,,,,,,,,,,,,,,,,,,,,",
-  "equivalenceOptions": ["EQUAL", "EQUIVALENT", "WIDER", "NARROWER", "INEXACT", "UNMATCHED", "UNREVIEWED"]
+  "equivalenceOptions": ["EQUAL", "EQUIVALENT", "WIDER", "NARROWER", "INEXACT", "UNMATCHED", "UNREVIEWED"],
+  "limitedFilters": [
+    {
+      "name": "Concept",
+      "value": "Standard",
+      "options": []
+    },
+    {
+      "name": "Validity",
+      "value": "Valid",
+      "options": []
+    }
+  ]
 }

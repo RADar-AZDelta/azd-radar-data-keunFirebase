@@ -26,4 +26,5 @@ export default class Config {
   static flaggedBlobInitial = smallConfig.flaggedBlobInitial
   static equivalenceOptions = smallConfig.equivalenceOptions
   static defaultSettings: ISettings = defaultSettings
+  static limitedFilters = smallConfig.limitedFilters
 }
