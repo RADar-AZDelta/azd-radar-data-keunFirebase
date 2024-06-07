@@ -38,12 +38,8 @@
   </button>
   {#if userIsAdmin}
     <div class="action-container">
-      <button class="download-file" onclick={download}>
-        <Icon id="download" />
-      </button>
-      <button class="delete-file" onclick={deleteFile}>
-        <Icon id="x" />
-      </button>
+      <button class="download-file" onclick={download}><Icon id="download" /></button>
+      <button class="delete-file" onclick={deleteFile}><Icon id="x" /></button>
     </div>
   {/if}
 </div>

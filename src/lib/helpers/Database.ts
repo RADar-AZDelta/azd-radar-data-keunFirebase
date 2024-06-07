@@ -12,6 +12,7 @@ export default class Database {
   private static storage = storage
   private static customConceptsCollection: string = 'customConcepts'
   private static storageCollection: string = 'Keun-files'
+  private static storageDeletedColl: string = 'Keun-deleted-files'
   private static firestoreFileColl: string = 'files'
   private static storageCustomColl: string = 'Keun-custom-files'
   private static storageFlaggedColl: string = 'Keun-flagged-files'
@@ -137,10 +138,21 @@ export default class Database {
     if (!fileSnapshot || !fileSnapshot.data()) return
     const fileInfo = fileSnapshot.data()
     if (!fileInfo) return
-    await this.storage.deleteFileStorage(`${this.storageCollection}/${id}`)
-    await this.database.deleteDocumentFirestore(this.firestoreFileColl, id)
+    const deleted = await this.softDeleteKeunFile(id)
+    if (!deleted) return
     if (ids?.customId) await this.storage.deleteFileStorage(`${this.storageCustomColl}/${ids.customId}`)
     if (ids?.flaggedId) await this.storage.deleteFileStorage(`${this.storageFlaggedColl}/${ids.flaggedId}`)
+  }
+
+  private static async softDeleteKeunFile(id: string) {
+    const fileInfo = await this.storage.readFileStorage(`${this.storageCollection}/${id}`)
+    if (!fileInfo || !fileInfo.file || !fileInfo.meta) return
+    const { file: blob, meta } = fileInfo
+    const file = new File([blob], meta.customMetadata?.name ?? meta.name, { type: 'text/csv' })
+    await this.storage.uploadFileStorage(`${this.storageDeletedColl}/${id}`, file, meta)
+    await this.storage.deleteFileStorage(`${this.storageCollection}/${id}`)
+    await this.database.deleteDocumentFirestore(this.firestoreFileColl, id)
+    return true
   }
 
   private static async retrieveFileIds(id: string) {
