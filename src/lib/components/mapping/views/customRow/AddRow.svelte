@@ -15,9 +15,11 @@
 
   async function addRow() {
     const conceptAlreadyExists = await Database.checkIfCustomConceptAlreadyExists(inputRow as ICustomConceptCompact)
-    // if (conceptAlreadyExists) return dispatch('updateError', { error: 'This custom concept already exists' })
     if (conceptAlreadyExists) return updateError('This custom concept already exists')
-    const result = await CustomValidation.validateRow(inputRow, true).catch(error => updateError(error))
+    const result = await CustomValidation.validateRow(inputRow, true).catch(error => {
+      updateError(error)
+      return true
+    })
     if (result) return
     const { concept_name, concept_class_id, domain_id, vocabulary_id } = inputRow
     const concept = { concept_name, concept_class_id, domain_id, vocabulary_id }
