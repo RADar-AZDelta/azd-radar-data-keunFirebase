@@ -36,11 +36,6 @@
     rowsPerPage: 15,
   }
 
-  // async function mapCustomConcept(e: CustomEvent<MapCustomConceptED>) {
-  //   const { concept, action } = e.detail
-  //   customMappingInput(concept, action)
-  // }
-
   const deleteError = () => (errorMessage = undefined)
 
   async function updateError(error: string | undefined) {
@@ -49,12 +44,12 @@
 
   async function getAllCustomConcepts() {
     const customConcepts: ICustomConceptCompact[] = (await Database.getCustomConcepts()) as ICustomConceptCompact[]
-    const inputRow = { concept_name: '', domain_id: '', vocabulary_id: '', concept_class_id: '', id: -1 }
+    const inputRow = { concept_name: '', domain_id: '', vocabulary_id: '', concept_class_id: '', concept_id: -1 }
     data = [inputRow, ...customConcepts]
   }
 
   async function updateCustoms() {
-    const inputRow = { concept_name: '', domain_id: '', vocabulary_id: '', concept_class_id: '', id: -1 }
+    const inputRow = { concept_name: '', domain_id: '', vocabulary_id: '', concept_class_id: '', concept_id: -1 }
     data = [inputRow, ...customConcepts]
   }
 

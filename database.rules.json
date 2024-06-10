@@ -5,6 +5,7 @@
       "concept_name": { ".validate": true },
       "domain_id": { ".validate": true },
       "vocabulary_id": { ".validate": true },
+      "concept_id": { ".validate": true },
       "$other": { ".validate": false },
       ".read": "auth !== null && auth.provider !== 'anonymous' && auth.uid !== null",
       ".write": "auth !== null && auth.provider !== 'anonymous' && auth.uid !== null"

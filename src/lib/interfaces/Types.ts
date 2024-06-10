@@ -261,7 +261,7 @@ export interface ICustomConceptCompact {
   concept_class_id: string
   domain_id: string
   vocabulary_id: string
-  id: number
+  concept_id: number
   [key: string]: string | number
 }
 

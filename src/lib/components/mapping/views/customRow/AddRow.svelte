@@ -22,7 +22,7 @@
     })
     if (result) return
     const { concept_name, concept_class_id, domain_id, vocabulary_id } = inputRow
-    const concept = { concept_name, concept_class_id, domain_id, vocabulary_id, id: 0 }
+    const concept = { concept_name, concept_class_id, domain_id, vocabulary_id, concept_id: 0 }
     await Database.addCustomConcept(concept)
     await resetInputRow()
     updateError(undefined)
@@ -30,6 +30,9 @@
 
   async function resetInputRow() {
     if (originalIndex !== 0) return
+    inputRow.concept_name = ''
+    inputRow.concept_class_id = ''
+    inputRow.domain_id = ''
     updateVocab()
   }
 

@@ -1,3 +1,4 @@
+import { PUBLIC_CUSTOM_CONCEPT_ID_START } from '$env/static/public'
 import { FileHelper, logWhenDev } from '@radar-azdelta-int/radar-utils'
 import { database, realtimeDatabase, storage } from '$lib/constants/firebase'
 import Config from '$lib/helpers/Config'
@@ -44,7 +45,8 @@ export default class Database {
     )
     if (checkIfCustomExists) return
     const numberOfCustomConcepts = customConcepts.length
-    const addedConcept = { concept_name, concept_class_id, domain_id, vocabulary_id }
+    const id = Number(PUBLIC_CUSTOM_CONCEPT_ID_START) - numberOfCustomConcepts
+    const addedConcept = { concept_name, concept_class_id, domain_id, vocabulary_id, concept_id: id }
     await this.realtimeDatabase.writeToDatabase(`${this.customConceptsCollection}/${numberOfCustomConcepts}`, addedConcept)
   }
 
@@ -62,7 +64,7 @@ export default class Database {
   private static async updateCustomConceptInDatabase(concept: ICustomConceptCompact, existing: ICustomConceptCompact) {
     const { concept_name, concept_class_id, domain_id, vocabulary_id } = concept
     const { id } = existing
-    const updatedConcept = { concept_name, concept_class_id, domain_id, vocabulary_id }
+    const updatedConcept = { concept_name, concept_class_id, domain_id, vocabulary_id, concept_id: id }
     await this.realtimeDatabase.updateToDatabase(`${this.customConceptsCollection}/${id}`, updatedConcept)
   }
 
@@ -76,7 +78,7 @@ export default class Database {
     await this.realtimeDatabase.listenOnDatabase(this.customConceptsCollection, c => {
       const concepts: any[] = c.val()
       const updatedConcepts: ICustomConceptCompact[] = concepts.map((concept: any, index: number) => {
-        return { id: index, ...concept }
+        return { ...concept, concept_id: concept?.concept_id ?? Number(PUBLIC_CUSTOM_CONCEPT_ID_START) - index }
       })
       customConcepts.splice(0, customConcepts.length)
       customConcepts.push(...updatedConcepts)
