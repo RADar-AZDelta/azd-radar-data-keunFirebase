@@ -73,10 +73,6 @@
     uploadFile()
   }
 
-  async function setProcessing(process: boolean) {
-    processing = process
-  }
-
   $effect(() => {
     if ($user) getFiles()
   })
@@ -101,7 +97,7 @@
           <h1 class="title">Files to map</h1>
         </div>
         <div class="file-list">
-          <FileMenu {files} {setProcessing} />
+          <FileMenu {files} />
         </div>
         {#if processing}
           <Spinner />

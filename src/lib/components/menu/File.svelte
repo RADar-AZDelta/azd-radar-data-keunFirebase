@@ -7,7 +7,7 @@
   import type { IFileTab } from '$lib/interfaces/Types'
   import Icon from '$lib/components/extra/Icon.svelte'
 
-  let { id, name, domain, confirmFileDeletion }: IFileTab = $props()
+  let { id, name, domain }: IFileTab = $props()
 
   let userIsAdmin = $derived($userSessionStore.roles?.includes('admin'))
 
@@ -26,8 +26,6 @@
   }
 
   const download = async () => await Database.downloadFiles(id)
-
-  const deleteFile = async () => await confirmFileDeletion(id, name)
 </script>
 
 <div class="file-card">
@@ -39,7 +37,6 @@
   {#if userIsAdmin}
     <div class="action-container">
       <button class="download-file" onclick={download}><Icon id="download" /></button>
-      <button class="delete-file" onclick={deleteFile}><Icon id="x" /></button>
     </div>
   {/if}
 </div>
@@ -79,21 +76,6 @@
     display: flex;
     align-items: center;
     gap: 1rem;
-  }
-
-  .delete-file {
-    border: none;
-    background-color: inherit;
-  }
-
-  .delete-file:hover {
-    background-color: #ff7f7f;
-  }
-
-  .delete-file:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px #e67f7f;
-    background-color: #ff7f7f;
   }
 
   .download-file {

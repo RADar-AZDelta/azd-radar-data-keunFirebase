@@ -18,7 +18,6 @@
   import type { IUsagiRow } from '$lib/interfaces/Types'
   import Database from '$lib/helpers/Database'
   import { createAbortAutoMapping, createDisableActions, createSettings, createTriggerAutoMapping } from '$lib/stores/runes.svelte'
-  import { FileHelper } from '@radar-azdelta-int/radar-utils'
 
   let settings = createSettings()
   let file: File | undefined = $state()

@@ -426,7 +426,6 @@ export interface IFileTab {
   id: string
   name: string
   domain: string | null
-  confirmFileDeletion: (id: string, name: string) => Promise<void>
 }
 
 export interface IIconProps {
@@ -450,7 +449,6 @@ export interface IFileInputDialogProps {
 
 export interface IFileMenuProps {
   files: IFileInformation[]
-  setProcessing: (processing: boolean) => Promise<void>
 }
 
 export interface IAutoCompleteInputProps {
