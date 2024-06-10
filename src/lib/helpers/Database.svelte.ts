@@ -6,7 +6,7 @@ import Table from '$lib/helpers/tables/Table'
 import Mapping from '$lib/helpers/mapping/Mapping'
 import type { ICustomConceptCompact, IFile, IFirestoreFile, IStorageCustomMetadata, IStorageMetadata } from '$lib/interfaces/Types'
 
-export let customConcepts = $state<ICustomConceptCompact[]>([])
+export const customConcepts = $state<ICustomConceptCompact[]>([])
 
 export default class Database {
   private static database = database
@@ -85,7 +85,7 @@ export default class Database {
   }
 
   static async fetchCustomConceptsDirectly() {
-    const customConcepts: ICustomConceptCompact[] = await this.realtimeDatabase.readDatabase(`customConcepts`)
+    const customConcepts: ICustomConceptCompact[] = await this.realtimeDatabase.readDatabase('customConcepts')
     return customConcepts
   }
 

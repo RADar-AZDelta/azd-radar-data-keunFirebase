@@ -72,15 +72,7 @@
   <h2 class="custom-concept-title">Create a custom concept</h2>
   <DataTable {data} {columns} {options}>
     {#snippet rowChild(renderedRow: any, originalIndex: any, index: any, columns: any, option: any)}
-      <CustomRow
-        {renderedRow}
-        {columns}
-        {originalIndex}
-        usagiRow={selectedRow}
-        usagiRowIndex={selectedRowIndex}
-        {equivalence}
-        {updateError}
-      />
+      <CustomRow {renderedRow} {columns} {originalIndex} usagiRow={selectedRow} usagiRowIndex={selectedRowIndex} {equivalence} {updateError} />
     {/snippet}
   </DataTable>
 

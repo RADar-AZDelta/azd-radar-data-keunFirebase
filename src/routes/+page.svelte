@@ -1,17 +1,19 @@
 <script lang="ts">
+  import { FileHelper, logWhenDev, debounce } from '@radar-azdelta-int/radar-utils'
+  import { Spinner } from '@radar-azdelta-int/radar-svelte-components'
+  import JSZip from 'jszip'
   import ColumnsDialog from '$lib/components/menu/ColumnsDialog.svelte'
   import FileChoiceDialog from '$lib/components/menu/FileChoiceDialog.svelte'
   import FileInputDialog from '$lib/components/menu/FileInputDialog.svelte'
   import FileMenu from '$lib/components/menu/FileMenu.svelte'
-  import { FileHelper, logWhenDev } from '@radar-azdelta-int/radar-utils'
-  import Database, { customConcepts } from '$lib/helpers/Database.svelte'
-  import { Spinner } from '@radar-azdelta-int/radar-svelte-components'
+  import Icon from '$lib/components/extra/Icon.svelte'
+  import Database from '$lib/helpers/Database.svelte'
   import { userSessionStore as user } from '@radar-azdelta-int/radar-firebase-utils'
   import type { SvelteComponent } from 'svelte'
   import type { IFileInformation, ICustomConceptCompact } from '$lib/interfaces/Types'
-  import JSZip from 'jszip'
 
   let files: IFileInformation[] = $state([])
+  let filteredFiles: IFileInformation[] = $state([])
   let file: File | undefined = $state(undefined)
   let domain: string | null = $state(null)
   let cols: string[] = $state([])
@@ -52,7 +54,7 @@
   async function getFiles() {
     logWhenDev('getFiles: Get all the files in the database')
     const getFilesRes = await Database.getFilesList()
-    if (getFilesRes) files = getFilesRes
+    if (getFilesRes) files = filteredFiles = getFilesRes
   }
 
   async function deleteFiles(fileId: string | undefined) {
@@ -110,10 +112,15 @@
         concept_code: '',
         valid_start_date: Date.now(),
         valid_end_date: Number(new Date('2099-12-31')),
-        invalid_reason: ''
+        invalid_reason: '',
       }
     })
   }
+
+  const filterFiles = debounce((e: Event) => {
+    const input = (e.target as HTMLInputElement).value
+    filteredFiles = files.filter(file => file.name.toLowerCase().includes(input.toLowerCase()))
+  }, 300)
 
   $effect(() => {
     if ($user) getFiles()
@@ -137,10 +144,16 @@
       <div class="file-menu">
         <div class="title-container">
           <h1 class="title">Files to map</h1>
+          <div class="search-container">
+            <input type="text" placeholder="Search for an Usagi file" class="search" oninput={filterFiles} />
+            <div class="search-icon">
+              <Icon id="search" />
+            </div>
+          </div>
           <button class="export" onclick={exportFiles}>Export</button>
         </div>
         <div class="file-list">
-          <FileMenu {files} />
+          <FileMenu files={filteredFiles} />
         </div>
         {#if processing}
           <Spinner />
@@ -218,5 +231,23 @@
   .export:hover {
     background-color: lightgray;
     cursor: pointer;
+  }
+
+  .search-container {
+    margin: 0 2rem;
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    position: relative;
+  }
+
+  .search {
+    flex: 1 1 auto;
+    padding: 0.2rem 0.5rem;
+  }
+
+  .search-icon {
+    position: absolute;
+    right: 1rem;
   }
 </style>

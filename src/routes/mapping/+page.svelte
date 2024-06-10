@@ -145,7 +145,7 @@
   }
 
   const customTableRenderedComplete = () => {
-    if(customTableRendered) return
+    if (customTableRendered) return
     customTableRendered = true
     extractCustomConcepts()
   }
@@ -212,13 +212,13 @@
   {/if}
 
   <div class="hidden">
-  <DataTable
-    data={customConceptsFile}
-    options={Config.customTableOptions}
-    modifyColumnMetadata={CustomTable.modifyColumnMetadata}
-    rendered={customTableRenderedComplete}
-    bind:this={CustomTable.table}
-  />
+    <DataTable
+      data={customConceptsFile}
+      options={Config.customTableOptions}
+      modifyColumnMetadata={CustomTable.modifyColumnMetadata}
+      rendered={customTableRenderedComplete}
+      bind:this={CustomTable.table}
+    />
   </div>
 
   <div class="hidden">
