@@ -3,12 +3,13 @@
   import FileChoiceDialog from '$lib/components/menu/FileChoiceDialog.svelte'
   import FileInputDialog from '$lib/components/menu/FileInputDialog.svelte'
   import FileMenu from '$lib/components/menu/FileMenu.svelte'
-  import { logWhenDev } from '@radar-azdelta-int/radar-utils'
-  import Database from '$lib/helpers/Database.svelte'
+  import { FileHelper, logWhenDev } from '@radar-azdelta-int/radar-utils'
+  import Database, { customConcepts } from '$lib/helpers/Database.svelte'
   import { Spinner } from '@radar-azdelta-int/radar-svelte-components'
   import { userSessionStore as user } from '@radar-azdelta-int/radar-firebase-utils'
   import type { SvelteComponent } from 'svelte'
-  import type { IFileInformation } from '$lib/interfaces/Types'
+  import type { IFileInformation, ICustomConceptCompact } from '$lib/interfaces/Types'
+  import JSZip from 'jszip'
 
   let files: IFileInformation[] = $state([])
   let file: File | undefined = $state(undefined)
@@ -73,6 +74,47 @@
     uploadFile()
   }
 
+  async function exportFiles() {
+    const files = await Database.fetchFiles()
+    if (!files || !files.length) return
+    const zip = new JSZip()
+    for (let file of files) {
+      if (!file.file) continue
+      zip.file(`usagi/${file.name}`, file.file)
+    }
+    const vocab = await createVocabCSV()
+    if (vocab) zip.file('customConcepts.csv', vocab)
+    const blob = await zip.generateAsync({ type: 'blob' })
+    const zipFile = new File([blob], 'keun.zip')
+    await FileHelper.downloadFile(zipFile)
+  }
+
+  async function createVocabCSV() {
+    const json = await Database.fetchCustomConceptsDirectly()
+    if (!json || !json[0]) return
+    const concepts = await transformConceptsToCSVFormat(json)
+    const file = await FileHelper.jsonToCsv(concepts, 'customVocabulary.csv')
+    return file
+  }
+
+  async function transformConceptsToCSVFormat(concepts: ICustomConceptCompact[]) {
+    return concepts.map(concept => {
+      const { concept_class_id, concept_name, domain_id, vocabulary_id } = concept
+      return {
+        concept_id: 0,
+        concept_name,
+        domain_id,
+        vocabulary_id,
+        concept_class_id,
+        standard_concept: '',
+        concept_code: '',
+        valid_start_date: Date.now(),
+        valid_end_date: Number(new Date('2099-12-31')),
+        invalid_reason: ''
+      }
+    })
+  }
+
   $effect(() => {
     if ($user) getFiles()
   })
@@ -95,6 +137,7 @@
       <div class="file-menu">
         <div class="title-container">
           <h1 class="title">Files to map</h1>
+          <button class="export" onclick={exportFiles}>Export</button>
         </div>
         <div class="file-list">
           <FileMenu {files} />
@@ -164,5 +207,16 @@
     outline: none;
     box-shadow: 0 0 0 2px #7feb7f;
     background-color: #90ee90;
+  }
+
+  .export {
+    background-color: #f6f6f6;
+    border: 1px solid #d8d8d8;
+    border-radius: 5px;
+  }
+
+  .export:hover {
+    background-color: lightgray;
+    cursor: pointer;
   }
 </style>

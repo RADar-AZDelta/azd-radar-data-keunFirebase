@@ -81,6 +81,12 @@ export default class Database {
       customConcepts.splice(0, customConcepts.length)
       customConcepts.push(...updatedConcepts)
     })
+    return customConcepts
+  }
+
+  static async fetchCustomConceptsDirectly() {
+    const customConcepts: ICustomConceptCompact[] = await this.realtimeDatabase.readDatabase(`customConcepts`)
+    return customConcepts
   }
 
   static async checkFileExistance(id: string) {
@@ -265,6 +271,16 @@ export default class Database {
         })
     }
     return fileNames
+  }
+
+  static async fetchFiles() {
+    const fileIds = await this.getFilesFromFirestore()
+    const files = []
+    for (const fileId of fileIds) {
+      const file = await this.readFileFromCollection(fileId, this.storageCollection)
+      if (file) files.push({ id: fileId, file: file.file, name: file.name })
+    }
+    return files
   }
 
   private static async getFileNameFromStorage(id: string) {
