@@ -15,8 +15,8 @@ dependencies:
     specifier: ^0.0.44
     version: 0.0.44
   '@radar-azdelta-int/radar-utils':
-    specifier: ^0.0.18
-    version: 0.0.18
+    specifier: ^0.0.19
+    version: 0.0.19
   '@radar-azdelta/svelte-athena-search':
     specifier: ^0.0.43
     version: 0.0.43(@sveltejs/vite-plugin-svelte@3.1.0)(svelte@5.0.0-next.143)(vite@5.2.11)
@@ -951,8 +951,8 @@ packages:
     resolution: {integrity: sha512-4uo6z3hLElzhNXqaqDBsNrrsyHK2zc2aa8a23sjuppiGKSTtfGSjPEl0CUbCne01m6GWiW0tMPNWDsD2+pSxwA==, tarball: https://europe-west1-npm.pkg.dev/azd-dev-artifacts/azd-d-artifacts-art-euwe1-npmrepo/@radar-azdelta-int/radar-utils/-/@radar-azdelta-int/radar-utils-0.0.15.tgz}
     dev: false
 
-  /@radar-azdelta-int/radar-utils@0.0.18:
-    resolution: {integrity: sha512-kwkWWU05GVo9RVN/bbCEtkyP9Psv8QvC8JJM+8wYxjMMVSyUESt1VZLa43GD2A1lsSF7swPNA/S1fBHZ/NPBhQ==, tarball: https://europe-west1-npm.pkg.dev/azd-dev-artifacts/azd-d-artifacts-art-euwe1-npmrepo/@radar-azdelta-int/radar-utils/-/@radar-azdelta-int/radar-utils-0.0.18.tgz}
+  /@radar-azdelta-int/radar-utils@0.0.19:
+    resolution: {integrity: sha512-TOR+dVhx27nhjjqAeuMECbqdiKt30iGz/m9xQd6EjhwUaZmykSpquCg54fF1J2+Ppug+jB1tcXi70vEk5LDJrQ==, tarball: https://europe-west1-npm.pkg.dev/azd-dev-artifacts/azd-d-artifacts-art-euwe1-npmrepo/@radar-azdelta-int/radar-utils/-/@radar-azdelta-int/radar-utils-0.0.19.tgz}
     dev: false
 
   /@radar-azdelta/svelte-athena-search@0.0.43(@sveltejs/vite-plugin-svelte@3.1.0)(svelte@5.0.0-next.143)(vite@5.2.11):
