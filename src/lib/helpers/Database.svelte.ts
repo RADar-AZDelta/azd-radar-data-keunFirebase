@@ -1,14 +1,16 @@
-import { where } from '@radar-azdelta-int/radar-firebase-utils'
-import { FileHelper } from '@radar-azdelta-int/radar-utils'
-import { database, storage } from '$lib/constants/firebase'
+import { FileHelper, logWhenDev } from '@radar-azdelta-int/radar-utils'
+import { database, realtimeDatabase, storage } from '$lib/constants/firebase'
 import Config from '$lib/helpers/Config'
 import CustomTable from '$lib/helpers/tables/CustomTable'
 import Table from '$lib/helpers/tables/Table'
 import Mapping from '$lib/helpers/mapping/Mapping'
 import type { ICustomConceptCompact, IFile, IFirestoreFile, IStorageCustomMetadata, IStorageMetadata } from '$lib/interfaces/Types'
 
+export let customConcepts = $state<ICustomConceptCompact[]>([])
+
 export default class Database {
   private static database = database
+  private static realtimeDatabase = realtimeDatabase
   private static storage = storage
   private static customConceptsCollection: string = 'customConcepts'
   private static storageCollection: string = 'Keun-files'
@@ -16,35 +18,34 @@ export default class Database {
   private static firestoreFileColl: string = 'files'
   private static storageCustomColl: string = 'Keun-custom-files'
   private static storageFlaggedColl: string = 'Keun-flagged-files'
-  private static customConcepts: ICustomConceptCompact[] = []
 
   static async checkIfCustomConceptAlreadyExists(row: ICustomConceptCompact) {
     const { concept_name, concept_class_id, domain_id, vocabulary_id } = row
-    const recordName = `${concept_name}-${domain_id.replaceAll('/', '')}-${concept_class_id.replaceAll('/', '')}-${vocabulary_id}`
-    const conceptDocument = await this.database.readFirestore(this.customConceptsCollection, recordName)
-    if (!conceptDocument) return false
-    const concept = conceptDocument.data()
-    if (!concept) return false
-    return true
+    const customAlreadyExists = customConcepts.some(
+      concept =>
+        concept.concept_name === concept_name &&
+        concept.concept_class_id === concept_class_id &&
+        concept.domain_id === domain_id &&
+        concept.vocabulary_id === vocabulary_id,
+    )
+    return customAlreadyExists
   }
 
   static async checkForCustomConceptWithSameName(name: string) {
-    const constraints = [where('concept_name', '==', name)]
-    const documents = await this.database.executeFilterQueryFirestore(this.customConceptsCollection, constraints)
-    if (!documents) return false
-    const concepts = documents.docs.map(doc => doc.data())
-    return concepts.length > 0
+    const customAlreadyExists = customConcepts.some(concept => concept.concept_name === name)
+    return customAlreadyExists
   }
 
   static async addCustomConcept(concept: ICustomConceptCompact) {
-    if (!this.customConcepts.length) await this.getCustomConcepts()
+    if (!customConcepts.length) await this.getCustomConcepts()
     const { concept_name, concept_class_id, domain_id, vocabulary_id } = concept
-    const checkIfCustomExists = this.customConcepts.some(
+    const checkIfCustomExists = customConcepts.some(
       c => c.concept_name === concept_name && c.concept_class_id === concept_class_id && c.domain_id === domain_id && c.vocabulary_id === vocabulary_id,
     )
     if (checkIfCustomExists) return
-    const recordName = `${concept_name}-${domain_id.replaceAll('/', '')}-${concept_class_id.replaceAll('/', '')}-${vocabulary_id}`
-    await this.database.writeToFirestore(this.customConceptsCollection, recordName, concept)
+    const numberOfCustomConcepts = customConcepts.length
+    const addedConcept = { concept_name, concept_class_id, domain_id, vocabulary_id }
+    await this.realtimeDatabase.writeToDatabase(`${this.customConceptsCollection}/${numberOfCustomConcepts}`, addedConcept)
   }
 
   static async updateCustomConcept(concept: ICustomConceptCompact, existingConcept: ICustomConceptCompact) {
@@ -60,20 +61,26 @@ export default class Database {
 
   private static async updateCustomConceptInDatabase(concept: ICustomConceptCompact, existing: ICustomConceptCompact) {
     const { concept_name, concept_class_id, domain_id, vocabulary_id } = concept
-    const { concept_name: name, concept_class_id: classId, domain_id: domain, vocabulary_id: vocab } = existing
-    const oldName = `${name}-${domain.replaceAll('/', '')}-${classId.replaceAll('/', '')}-${vocab}`
-    const recordName = `${concept_name}-${domain_id.replaceAll('/', '')}-${concept_class_id.replaceAll('/', '')}-${vocabulary_id}`
-    await this.database.writeToFirestore(this.customConceptsCollection, recordName, concept)
-    if (oldName === recordName) return
-    await this.database.deleteDocumentFirestore(this.customConceptsCollection, oldName)
+    const { id } = existing
+    const updatedConcept = { concept_name, concept_class_id, domain_id, vocabulary_id }
+    await this.realtimeDatabase.updateToDatabase(`${this.customConceptsCollection}/${id}`, updatedConcept)
   }
 
   static async getCustomConcepts() {
-    const concepts = await this.database.readFirestoreCollection(this.customConceptsCollection)
-    if (!concepts) return []
-    const customConcepts = concepts.docs.map(doc => doc.data())
-    this.customConcepts = customConcepts as ICustomConceptCompact[]
+    if (!customConcepts.length) await this.fetchCustomConcepts()
     return customConcepts
+  }
+
+  private static async fetchCustomConcepts() {
+    logWhenDev('fetchCustomConcepts: Refetching the custom concepts because of a change in the database.')
+    await this.realtimeDatabase.listenOnDatabase(this.customConceptsCollection, c => {
+      const concepts: any[] = c.val()
+      const updatedConcepts: ICustomConceptCompact[] = concepts.map((concept: any, index: number) => {
+        return { id: index, ...concept }
+      })
+      customConcepts.splice(0, customConcepts.length)
+      customConcepts.push(...updatedConcepts)
+    })
   }
 
   static async checkFileExistance(id: string) {

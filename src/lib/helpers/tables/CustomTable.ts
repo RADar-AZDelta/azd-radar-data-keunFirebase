@@ -1,7 +1,7 @@
 import { query } from 'arquero'
 import { reformatDate } from '@radar-azdelta-int/radar-utils'
 import Config from '$lib/helpers/Config'
-import Database from '$lib/helpers/Database'
+import Database from '$lib/helpers/Database.svelte'
 import Table from '$lib/helpers/tables/Table'
 import type { IColumnMetaData } from '@radar-azdelta/svelte-datatable'
 import type { ICustomConceptCompact, ICustomConceptInput, ICustomQueryResult, IUsagiRow } from '$lib/interfaces/Types'

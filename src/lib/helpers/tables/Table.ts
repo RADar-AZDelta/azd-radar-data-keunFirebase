@@ -1,7 +1,7 @@
 import { query } from 'arquero'
 import MappedConcepts from '$lib/helpers/general/MappedConcepts'
 import Config from '$lib/helpers/Config'
-import Database from '$lib/helpers/Database'
+import Database from '$lib/helpers/Database.svelte'
 import type Query from 'arquero/dist/types/query/query'
 import type { IColumnMetaData } from '@radar-azdelta/svelte-datatable'
 import type { IMappedRow, IMappedRows, IQueryResult, IUsagiRow } from '$lib/interfaces/Types'

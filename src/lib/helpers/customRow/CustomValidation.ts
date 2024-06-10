@@ -1,5 +1,5 @@
 import Config from '$lib/helpers/Config'
-import Database from '$lib/helpers/Database'
+import Database from '$lib/helpers/Database.svelte'
 
 export default class CustomValidation {
   private static input: Record<string, string> = {}

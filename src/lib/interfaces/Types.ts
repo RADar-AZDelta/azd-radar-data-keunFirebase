@@ -261,7 +261,8 @@ export interface ICustomConceptCompact {
   concept_class_id: string
   domain_id: string
   vocabulary_id: string
-  [key: string]: string
+  id: number
+  [key: string]: string | number
 }
 
 export interface ICustomConcept {
@@ -529,7 +530,6 @@ export interface ICustomRowProps {
   usagiRowIndex: number
   equivalence: string
   updateError: (error: string | undefined) => Promise<void>
-  addCustomConcept: (concept: ICustomConceptCompact) => Promise<void>
 }
 
 export interface IRowProps {
@@ -544,9 +544,7 @@ export interface IRowProps {
 export interface IAddRowProps {
   columns: IColumnMetaData[]
   originalIndex: number
-  renderedRow: ICustomConceptCompact
   updateError: (error: string | undefined) => Promise<void>
-  addCustomConcept: (concept: ICustomConceptCompact) => Promise<void>
 }
 
 export interface IAthenaActionsProps {

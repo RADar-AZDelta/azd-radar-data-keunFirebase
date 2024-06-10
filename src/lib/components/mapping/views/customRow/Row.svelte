@@ -2,7 +2,7 @@
   import { EditableCell } from '@radar-azdelta/svelte-datatable'
   import Config from '$lib/helpers/Config'
   import CustomRow from '$lib/helpers/customRow/CustomRow'
-  import Database from '$lib/helpers/Database'
+  import Database from '$lib/helpers/Database.svelte'
   import CustomValidation from '$lib/helpers/customRow/CustomValidation'
   import type { ICustomConceptCompact } from '$lib/interfaces/Types'
   import Icon from '$lib/components/extra/Icon.svelte'

@@ -3,7 +3,7 @@
   import { goto } from '$app/navigation'
   import { logWhenDev } from '@radar-azdelta-int/radar-utils'
   import { userSessionStore } from '@radar-azdelta-int/radar-firebase-utils'
-  import Database from '$lib/helpers/Database'
+  import Database from '$lib/helpers/Database.svelte'
   import type { IFileTab } from '$lib/interfaces/Types'
   import Icon from '$lib/components/extra/Icon.svelte'
 

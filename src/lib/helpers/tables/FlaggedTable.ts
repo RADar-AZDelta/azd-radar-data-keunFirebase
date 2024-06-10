@@ -1,5 +1,5 @@
 import Config from '$lib/helpers/Config'
-import Database from '$lib/helpers/Database'
+import Database from '$lib/helpers/Database.svelte'
 import Table from '$lib/helpers/tables/Table'
 import type { IUsagiRow } from '$lib/interfaces/Types'
 import type { IColumnMetaData } from '@radar-azdelta/svelte-datatable'

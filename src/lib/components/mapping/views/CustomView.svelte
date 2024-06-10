@@ -1,7 +1,7 @@
 <script lang="ts">
   import DataTable, { type IColumnMetaData, type ITableOptions } from '@radar-azdelta/svelte-datatable'
   import CustomRow from '$lib/components/mapping/views/customRow/CustomRow.svelte'
-  import Database from '$lib/helpers/Database'
+  import Database, { customConcepts } from '$lib/helpers/Database.svelte'
   import Icon from '$lib/components/extra/Icon.svelte'
   import type { ICustomViewProps, ICustomConceptCompact } from '$lib/interfaces/Types'
 
@@ -49,18 +49,22 @@
 
   async function getAllCustomConcepts() {
     const customConcepts: ICustomConceptCompact[] = (await Database.getCustomConcepts()) as ICustomConceptCompact[]
-    const inputRow = { concept_name: '', domain_id: '', vocabulary_id: '', concept_class_id: '' }
+    const inputRow = { concept_name: '', domain_id: '', vocabulary_id: '', concept_class_id: '', id: -1 }
     data = [inputRow, ...customConcepts]
   }
 
-  async function addCustomConcept(concept: ICustomConceptCompact) {
-    const first = data[0]
-    const rest = data.slice(1)
-    data = [first, concept, ...rest]
+  async function updateCustoms() {
+    const inputRow = { concept_name: '', domain_id: '', vocabulary_id: '', concept_class_id: '', id: -1 }
+    data = [inputRow, ...customConcepts]
   }
 
   $effect(() => {
     getAllCustomConcepts()
+  })
+
+  $effect(() => {
+    customConcepts
+    updateCustoms()
   })
 </script>
 
@@ -76,7 +80,6 @@
         usagiRowIndex={selectedRowIndex}
         {equivalence}
         {updateError}
-        {addCustomConcept}
       />
     {/snippet}
   </DataTable>

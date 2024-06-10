@@ -16,7 +16,7 @@
   import type { SvelteComponent } from 'svelte'
   import type { ITableOptions } from '@radar-azdelta/svelte-datatable'
   import type { IUsagiRow } from '$lib/interfaces/Types'
-  import Database from '$lib/helpers/Database'
+  import Database from '$lib/helpers/Database.svelte'
   import { createAbortAutoMapping, createDisableActions, createSettings, createTriggerAutoMapping } from '$lib/stores/runes.svelte'
 
   let settings = createSettings()

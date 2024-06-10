@@ -1,13 +1,13 @@
 <script lang="ts">
   import Config from '$lib/helpers/Config'
   import CustomValidation from '$lib/helpers/customRow/CustomValidation'
-  import Database from '$lib/helpers/Database'
+  import Database from '$lib/helpers/Database.svelte'
   import Icon from '$lib/components/extra/Icon.svelte'
   import type { IAddRowProps, ICustomConceptCompact } from '$lib/interfaces/Types'
   import { createSettings } from '$lib/stores/runes.svelte'
   import Autocomplete from '$lib/components/extra/Autocomplete.svelte'
 
-  let { columns, originalIndex, renderedRow, updateError, addCustomConcept }: IAddRowProps = $props()
+  let { columns, originalIndex, updateError }: IAddRowProps = $props()
 
   const autoCompleteColumns = ['concept_class_id', 'domain_id']
   let inputRow: Record<string, any> = $state({})
@@ -22,10 +22,9 @@
     })
     if (result) return
     const { concept_name, concept_class_id, domain_id, vocabulary_id } = inputRow
-    const concept = { concept_name, concept_class_id, domain_id, vocabulary_id }
+    const concept = { concept_name, concept_class_id, domain_id, vocabulary_id, id: 0 }
     await Database.addCustomConcept(concept)
     await resetInputRow()
-    addCustomConcept(concept)
     updateError(undefined)
   }
 

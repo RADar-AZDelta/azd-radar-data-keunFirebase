@@ -4,7 +4,7 @@
   import FileInputDialog from '$lib/components/menu/FileInputDialog.svelte'
   import FileMenu from '$lib/components/menu/FileMenu.svelte'
   import { logWhenDev } from '@radar-azdelta-int/radar-utils'
-  import Database from '$lib/helpers/Database'
+  import Database from '$lib/helpers/Database.svelte'
   import { Spinner } from '@radar-azdelta-int/radar-svelte-components'
   import { userSessionStore as user } from '@radar-azdelta-int/radar-firebase-utils'
   import type { SvelteComponent } from 'svelte'
