@@ -15,7 +15,6 @@ export default class Database {
   private static realtimeDatabase = realtimeDatabase
   private static storage = storage
   private static customConceptsCollection: string = 'customConcepts'
-  private static customConceptsCopyCollection: string = 'customConcepts2'
   private static storageCollection: string = 'Keun-files'
   private static storageDeletedColl: string = 'Keun-deleted-files'
   private static firestoreFileColl: string = 'files'
@@ -48,7 +47,7 @@ export default class Database {
     if (checkIfCustomExists) return
     const { arrayId, id } = await this.findIdOfCustomConcept()
     const addedConcept = { concept_name, concept_class_id, domain_id, vocabulary_id, concept_id: id }
-    await this.realtimeDatabase.writeToDatabase(`${this.customConceptsCopyCollection}/${arrayId}`, addedConcept)
+    await this.realtimeDatabase.writeToDatabase(`${this.customConceptsCollection}/${arrayId}`, addedConcept)
   }
 
   private static async findIdOfCustomConcept() {
@@ -79,7 +78,7 @@ export default class Database {
     const { id } = existing
     const updatedConcept = { concept_name, concept_class_id, domain_id, vocabulary_id, concept_id: id }
     if (!id) return
-    await this.realtimeDatabase.updateToDatabase(`${this.customConceptsCopyCollection}/${id}`, updatedConcept)
+    await this.realtimeDatabase.updateToDatabase(`${this.customConceptsCollection}/${id}`, updatedConcept)
   }
 
   static async getCustomConcepts() {
@@ -89,7 +88,7 @@ export default class Database {
 
   private static async fetchCustomConcepts() {
     logWhenDev('fetchCustomConcepts: Refetching the custom concepts because of a change in the database.')
-    await this.realtimeDatabase.listenOnDatabase(this.customConceptsCopyCollection, c => {
+    await this.realtimeDatabase.listenOnDatabase(this.customConceptsCollection, c => {
       const concepts: any[] = c.val()
       const updatedConcepts: ICustomConceptCompact[] = concepts.map((concept: any, index: number) => {
         return { ...concept, concept_id: concept?.concept_id ?? Number(PUBLIC_CUSTOM_CONCEPT_ID_START) - index }
