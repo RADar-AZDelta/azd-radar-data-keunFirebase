@@ -2,9 +2,8 @@
   import { debounce } from '@radar-azdelta-int/radar-utils'
   import type { IAutocompleteProps } from '$lib/interfaces/Types'
 
-  let { id, list, update }: IAutocompleteProps = $props()
+  let { id, list, input = $bindable(), update }: IAutocompleteProps = $props()
 
-  let input = $state<string>()
   let suggestions = $state<string[]>([])
 
   function autoComplete(e: Event) {

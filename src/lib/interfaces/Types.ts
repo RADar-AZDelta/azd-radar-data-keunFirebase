@@ -565,6 +565,7 @@ export interface IMappedViewProps {
 
 export interface IAutocompleteProps {
   id: string
+  input: string
   list: string[]
   update: (id: string, value: string) => Promise<void>
 }

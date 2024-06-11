@@ -2,10 +2,10 @@ import Config from '$lib/helpers/Config'
 import Database from '$lib/helpers/Database.svelte'
 
 export default class CustomValidation {
-  private static input: Record<string, string> = {}
+  private static input: Record<string, string | number> = {}
   private static error: boolean = false
 
-  static async validateRow(input: Record<string, string>, create: boolean = false) {
+  static async validateRow(input: Record<string, string | number>, create: boolean = false) {
     await this.reset(input)
     await this.checkForEmptyProperties()
     await this.checkForInvalidDomain()
@@ -15,7 +15,7 @@ export default class CustomValidation {
     return this.error
   }
 
-  private static async reset(input: Record<string, string>) {
+  private static async reset(input: Record<string, string | number>) {
     this.input = input
     this.error = false
   }
@@ -31,7 +31,7 @@ export default class CustomValidation {
   private static async checkForInvalidDomain() {
     const { domain_id } = this.input
     const validDomains = Config.customConceptInfo['domain_id']
-    if (validDomains.includes(domain_id)) return
+    if (validDomains.includes(domain_id.toString())) return
     this.error = true
     throw new Error('The domain must be one of the suggested values')
   }
@@ -39,21 +39,21 @@ export default class CustomValidation {
   private static async checkForInvalidConceptClassId() {
     const { concept_class_id } = this.input
     const validConceptClassIds = Config.customConceptInfo['concept_class_id']
-    if (validConceptClassIds.includes(concept_class_id)) return
+    if (validConceptClassIds.includes(concept_class_id.toString())) return
     this.error = true
     throw new Error('The className must be one of the suggested values')
   }
 
   private static async checkForInvalidConceptName() {
     const { concept_name } = this.input
-    if (!concept_name.includes('/')) return
+    if (!concept_name.toString().includes('/')) return
     this.error = true
     throw new Error('The concept name can not contain a / character')
   }
 
   private static async checkForExistingConceptName() {
     const { concept_name } = this.input
-    const customConceptWithNameExists = await Database.checkForCustomConceptWithSameName(concept_name)
+    const customConceptWithNameExists = await Database.checkForCustomConceptWithSameName(concept_name.toString())
     if (!customConceptWithNameExists) return
     this.error = true
     throw new Error('There already exists a custom concept with the same name')

@@ -25,15 +25,15 @@
     const editedRow = { ...renderedRow, ...{ [columnId]: value } }
     const result = await CustomValidation.validateRow(editedRow).catch(error => updateError(error))
     if (result) return (renderedRow[columnId] = renderedRow[columnId])
-    const { concept_name, concept_class_id, domain_id, vocabulary_id } = renderedRow
-    const existingConcept = { concept_name, concept_class_id, domain_id, vocabulary_id }
+    const { concept_name, concept_class_id, domain_id, vocabulary_id, concept_id } = renderedRow
+    const existingConcept = { concept_name, concept_class_id, domain_id, vocabulary_id, concept_id }
     if (columnId === 'concept_name') {
       mappedToConceptIds.value[usagiRow.sourceCode][`custom-${value}`] = mappedToConceptIds.value[usagiRow.sourceCode]?.[`custom-${renderedRow.concept_name}`]
       mappedToConceptIds.update(mappedToConceptIds.value)
     }
     renderedRow[columnId] = value
     const { concept_name: name, concept_class_id: classId, domain_id: domain, vocabulary_id: vocab } = renderedRow
-    const newConcept = { concept_name: name, concept_class_id: classId, domain_id: domain, vocabulary_id: vocab }
+    const newConcept = { concept_name: name, concept_class_id: classId, domain_id: domain, vocabulary_id: vocab, concept_id }
     await Database.updateCustomConcept(newConcept, existingConcept)
   }
 
@@ -82,7 +82,7 @@
     </div>
   </td>
   {#each columns as column, _}
-    <td title={renderedRow[column.id]}>
+    <td title={renderedRow[column.id].toString()}>
       <EditableCell value={renderedRow[column.id]} changeValue={(value: string) => updateCustomConcept(value, column.id)} />
     </td>
   {/each}

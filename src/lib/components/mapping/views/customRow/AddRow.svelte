@@ -3,9 +3,9 @@
   import CustomValidation from '$lib/helpers/customRow/CustomValidation'
   import Database from '$lib/helpers/Database.svelte'
   import Icon from '$lib/components/extra/Icon.svelte'
-  import type { IAddRowProps, ICustomConceptCompact } from '$lib/interfaces/Types'
   import { createSettings } from '$lib/stores/runes.svelte'
   import Autocomplete from '$lib/components/extra/Autocomplete.svelte'
+  import type { IAddRowProps, ICustomConceptCompact } from '$lib/interfaces/Types'
 
   let { columns, originalIndex, updateError }: IAddRowProps = $props()
 
@@ -55,7 +55,7 @@
   <td>
     <div class="cell-container">
       {#if autoCompleteColumns.includes(id)}
-        <Autocomplete {id} {list} update={autoCompleteRow} />
+        <Autocomplete bind:input={inputRow[column.id]} {id} {list} update={autoCompleteRow} />
       {:else}
         <input bind:value={inputRow[column.id]} />
       {/if}

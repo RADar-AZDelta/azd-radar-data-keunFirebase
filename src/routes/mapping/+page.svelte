@@ -65,12 +65,6 @@
 
   const translate = async (text: string) => await BergamotTranslator.translate(text, settings.value.language)
 
-  // async function extractCustomConcepts() {
-  //   const result = await CustomTable.extractCustomConcepts().catch(() => console.log("FUCK"))
-  //   console.log("RES ", result)
-  //   customsExtracted = result ?? false
-  // }
-
   async function extractCustomConcepts() {
     await CustomTable.extractCustomConcepts()
     customsExtracted = true

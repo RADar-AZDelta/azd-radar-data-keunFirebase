@@ -8,12 +8,14 @@ import Mapping from '$lib/helpers/mapping/Mapping'
 import type { ICustomConceptCompact, IFile, IFirestoreFile, IStorageCustomMetadata, IStorageMetadata } from '$lib/interfaces/Types'
 
 export const customConcepts = $state<ICustomConceptCompact[]>([])
+export const unfilteredCustomConcepts = $state<(ICustomConceptCompact | undefined)[]>([])
 
 export default class Database {
   private static database = database
   private static realtimeDatabase = realtimeDatabase
   private static storage = storage
   private static customConceptsCollection: string = 'customConcepts'
+  private static customConceptsCopyCollection: string = 'customConcepts2'
   private static storageCollection: string = 'Keun-files'
   private static storageDeletedColl: string = 'Keun-deleted-files'
   private static firestoreFileColl: string = 'files'
@@ -44,10 +46,21 @@ export default class Database {
       c => c.concept_name === concept_name && c.concept_class_id === concept_class_id && c.domain_id === domain_id && c.vocabulary_id === vocabulary_id,
     )
     if (checkIfCustomExists) return
-    const numberOfCustomConcepts = customConcepts.length
-    const id = Number(PUBLIC_CUSTOM_CONCEPT_ID_START) - numberOfCustomConcepts
+    const { arrayId, id } = await this.findIdOfCustomConcept()
     const addedConcept = { concept_name, concept_class_id, domain_id, vocabulary_id, concept_id: id }
-    await this.realtimeDatabase.writeToDatabase(`${this.customConceptsCollection}/${numberOfCustomConcepts}`, addedConcept)
+    await this.realtimeDatabase.writeToDatabase(`${this.customConceptsCopyCollection}/${arrayId}`, addedConcept)
+  }
+
+  private static async findIdOfCustomConcept() {
+    const missingId = unfilteredCustomConcepts.indexOf(undefined)
+    if (missingId !== -1) {
+      let previousConceptId = unfilteredCustomConcepts[missingId - 1]?.concept_id
+      if (!previousConceptId) previousConceptId = Number(PUBLIC_CUSTOM_CONCEPT_ID_START) - customConcepts.length + 1
+      return { arrayId: missingId, id: previousConceptId - 1 }
+    }
+
+    const id = Number(PUBLIC_CUSTOM_CONCEPT_ID_START) - customConcepts.length
+    return { arrayId: customConcepts.length, id }
   }
 
   static async updateCustomConcept(concept: ICustomConceptCompact, existingConcept: ICustomConceptCompact) {
@@ -65,7 +78,8 @@ export default class Database {
     const { concept_name, concept_class_id, domain_id, vocabulary_id } = concept
     const { id } = existing
     const updatedConcept = { concept_name, concept_class_id, domain_id, vocabulary_id, concept_id: id }
-    await this.realtimeDatabase.updateToDatabase(`${this.customConceptsCollection}/${id}`, updatedConcept)
+    if (!id) return
+    await this.realtimeDatabase.updateToDatabase(`${this.customConceptsCopyCollection}/${id}`, updatedConcept)
   }
 
   static async getCustomConcepts() {
@@ -75,13 +89,16 @@ export default class Database {
 
   private static async fetchCustomConcepts() {
     logWhenDev('fetchCustomConcepts: Refetching the custom concepts because of a change in the database.')
-    await this.realtimeDatabase.listenOnDatabase(this.customConceptsCollection, c => {
+    await this.realtimeDatabase.listenOnDatabase(this.customConceptsCopyCollection, c => {
       const concepts: any[] = c.val()
       const updatedConcepts: ICustomConceptCompact[] = concepts.map((concept: any, index: number) => {
         return { ...concept, concept_id: concept?.concept_id ?? Number(PUBLIC_CUSTOM_CONCEPT_ID_START) - index }
       })
+      const filteredConcepts: ICustomConceptCompact[] = updatedConcepts.filter(concept => concept)
       customConcepts.splice(0, customConcepts.length)
-      customConcepts.push(...updatedConcepts)
+      unfilteredCustomConcepts.splice(0, unfilteredCustomConcepts.length)
+      customConcepts.push(...filteredConcepts)
+      unfilteredCustomConcepts.push(...updatedConcepts)
     })
     return customConcepts
   }
