@@ -323,7 +323,7 @@ export default class Database {
   }
 
   static async getCustomKeunFile(id: string) {
-    console.log("ID ", id)
+    // console.log("ID ", id)
     const custom = await this.readFileFromCollection(id, this.storageCustomColl)
     if (!custom) return
     const { file, name } = custom
