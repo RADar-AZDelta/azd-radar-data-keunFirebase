@@ -74,9 +74,9 @@ export default class Database {
   }
 
   private static async updateCustomConceptInDatabase(concept: ICustomConceptCompact, existing: ICustomConceptCompact) {
-    const { concept_name, concept_class_id, domain_id, vocabulary_id } = concept
+    const { concept_name, concept_class_id, domain_id, vocabulary_id, concept_id } = concept
     const { id } = existing
-    const updatedConcept = { concept_name, concept_class_id, domain_id, vocabulary_id, concept_id: id }
+    const updatedConcept = { concept_name, concept_class_id, domain_id, vocabulary_id, concept_id }
     if (!id) return
     await this.realtimeDatabase.updateToDatabase(`${this.customConceptsCollection}/${id}`, updatedConcept)
   }
@@ -91,7 +91,7 @@ export default class Database {
     await this.realtimeDatabase.listenOnDatabase(this.customConceptsCollection, c => {
       const concepts: any[] = c.val()
       const updatedConcepts: ICustomConceptCompact[] = concepts.map((concept: any, index: number) => {
-        return { ...concept, concept_id: concept?.concept_id ?? Number(PUBLIC_CUSTOM_CONCEPT_ID_START) - index }
+        return { ...concept, concept_id: concept?.concept_id ?? Number(PUBLIC_CUSTOM_CONCEPT_ID_START) - index, id: index }
       })
       const filteredConcepts: ICustomConceptCompact[] = updatedConcepts.filter(concept => concept)
       customConcepts.splice(0, customConcepts.length)
@@ -323,6 +323,7 @@ export default class Database {
   }
 
   static async getCustomKeunFile(id: string) {
+    console.log("ID ", id)
     const custom = await this.readFileFromCollection(id, this.storageCustomColl)
     if (!custom) return
     const { file, name } = custom

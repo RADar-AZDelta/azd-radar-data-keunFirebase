@@ -44,7 +44,8 @@ export default class CustomTable {
     await this.deleteFullTable()
     for (const concept of concepts.queriedData) await this.addCustomConceptToTable(concept)
     const testRow = await this.getCustomTableRow(0)
-    if (!testRow?.domain_id) await this.deleteCustomTableRows([0])
+    // TODO: check if the test row is deleted
+    if (testRow?.domain_id === 'test') await this.deleteCustomTableRows([0])
     await this.deleteFirstEmptyConceptIfNeeded()
     this.customTableWasFilled = true
   }
@@ -79,10 +80,7 @@ export default class CustomTable {
     const emptyConceptQuery = query().slice(0, 1).toObject()
     const firstConceptRes = await this.executeQueryOnCustomTable(emptyConceptQuery)
     const firstConcept = firstConceptRes.queriedData[0]
-    if (firstConcept.concept_name) {
-      this.firstRowIsEmpty = false
-      return
-    }
+    if (firstConcept.domain_id !== 'test') return (this.firstRowIsEmpty = false)
     await this.deleteCustomTableRows([0])
     this.firstRowIsEmpty = false
   }

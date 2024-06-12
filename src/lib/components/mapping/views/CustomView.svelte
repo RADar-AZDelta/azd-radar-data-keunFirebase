@@ -10,6 +10,11 @@
   let data: ICustomConceptCompact[] = $state([])
   const columns: IColumnMetaData[] = [
     {
+      id: 'concept_id',
+      label: 'Id',
+      width: 100
+    },
+    {
       id: 'concept_name',
       label: 'name',
     },
@@ -20,10 +25,12 @@
     {
       id: 'domain_id',
       label: 'domain',
+      width: 175
     },
     {
       id: 'vocabulary_id',
       label: 'vocabulary',
+      width: 100
     },
   ]
 

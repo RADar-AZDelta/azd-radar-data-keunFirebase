@@ -33,7 +33,7 @@ export default class CustomRow {
   private async addDetailToCustomConcept() {
     const customConcept: ICustomConceptInput = {
       ...this.customRow,
-      concept_id: 0,
+      concept_id: this.customRow.concept_id ?? 0,
       concept_code: this.usagiRow.sourceCode,
       valid_start_date: reformatDate(),
       valid_end_date: '2099-12-31',
@@ -45,9 +45,9 @@ export default class CustomRow {
 
   private async createCustomConcept() {
     const compactConcept = this.customRow
-    const { concept_name, domain_id, vocabulary_id, concept_class_id } = compactConcept
+    const { concept_name, domain_id, vocabulary_id, concept_class_id, concept_id } = compactConcept
     const concept: ICustomConcept = {
-      conceptId: 0,
+      conceptId: concept_id,
       conceptName: concept_name,
       domainId: domain_id,
       vocabularyId: vocabulary_id,

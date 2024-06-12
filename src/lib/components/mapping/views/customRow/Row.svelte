@@ -25,8 +25,9 @@
     const editedRow = { ...renderedRow, ...{ [columnId]: value } }
     const result = await CustomValidation.validateRow(editedRow).catch(error => updateError(error))
     if (result) return (renderedRow[columnId] = renderedRow[columnId])
-    const { concept_name, concept_class_id, domain_id, vocabulary_id, concept_id } = renderedRow
-    const existingConcept = { concept_name, concept_class_id, domain_id, vocabulary_id, concept_id }
+    const { concept_name, concept_class_id, domain_id, vocabulary_id, concept_id, id } = renderedRow
+    // TODO: test this further when deleting a custom concepts in the middle of the customs array
+    const existingConcept = { concept_name, concept_class_id, domain_id, vocabulary_id, concept_id, id }
     if (columnId === 'concept_name') {
       mappedToConceptIds.value[usagiRow.sourceCode][`custom-${value}`] = mappedToConceptIds.value[usagiRow.sourceCode]?.[`custom-${renderedRow.concept_name}`]
       mappedToConceptIds.update(mappedToConceptIds.value)
@@ -83,7 +84,11 @@
   </td>
   {#each columns as column, _}
     <td title={renderedRow[column.id].toString()}>
-      <EditableCell value={renderedRow[column.id]} changeValue={(value: string) => updateCustomConcept(value, column.id)} />
+      {#if column.id !== 'concept_id'}
+        <EditableCell value={renderedRow[column.id]} changeValue={(value: string) => updateCustomConcept(value, column.id)} />
+      {:else}
+        <p>{renderedRow[column.id]}</p>
+      {/if}
     </td>
   {/each}
 {/if}
