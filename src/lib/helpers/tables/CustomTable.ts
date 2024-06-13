@@ -10,9 +10,8 @@ export default class CustomTable {
     const concepts = await Table.extractCustomConceptIds()
     if (!concepts.length) return
     const customConcepts = await this.transformConceptsToCustomConcepts(concepts)
-    const uniqueCustomConcepts = await this.filterDoubleCustomConcepts(customConcepts)
     await this.removeAllTableRows()
-    await this.table.insertRows(uniqueCustomConcepts)
+    await this.table.insertRows(customConcepts)
     const blob = await this.table.getBlob()
     if (!blob) return
     return blob
@@ -40,17 +39,5 @@ export default class CustomTable {
       }
     })
     return customConcepts
-  }
-
-  private static async filterDoubleCustomConcepts(customConcepts: ICustomConceptInput[]) {
-    const uniqueCustomConcepts = customConcepts.reduce(
-      (acc, curr) => {
-        const customConceptAlreadyAdded = acc.some(custom => custom.concept_id === curr.concept_id)
-        if (!customConceptAlreadyAdded) acc.push(curr)
-        return acc
-      },
-      <ICustomConceptInput[]>[],
-    )
-    return uniqueCustomConcepts
   }
 }
