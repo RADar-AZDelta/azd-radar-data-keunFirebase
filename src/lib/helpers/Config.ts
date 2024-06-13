@@ -1,4 +1,4 @@
-import filters from '$lib/constants/athenaFilters.json'
+import domainFilter from '$lib/constants/domainFilter.json'
 import customConceptInfo from '$lib/constants/customConceptInfo.json'
 import columns from '$lib/constants/columns.json'
 import tableOptions from '$lib/constants/tableOptions.json'
@@ -8,8 +8,7 @@ import type { ITableOptions } from '@radar-azdelta/svelte-datatable'
 import type { ISettings } from '$lib/interfaces/Types'
 
 export default class Config {
-  static filters = filters
-  static domains = filters.find(filter => filter.name === 'Domain')?.options ?? []
+  static domains = domainFilter.options ?? []
   static customConceptInfo: Record<string, string[]> = customConceptInfo
   static additionalColumns = columns.additionalColumns
   static columnsCustomConcept = columns.columnsCustomConcept
@@ -22,9 +21,8 @@ export default class Config {
   static languages: Record<string, string> = smallConfig.languages
   static usagiRowConfig = smallConfig.usagiRow
   static athenaViews = smallConfig.athenaViews
-  static customBlobInitial = smallConfig.customBlobInitial
-  static flaggedBlobInitial = smallConfig.flaggedBlobInitial
   static equivalenceOptions = smallConfig.equivalenceOptions
   static defaultSettings: ISettings = defaultSettings
   static limitedFilters = smallConfig.limitedFilters
+  static initialTable = [{}]
 }

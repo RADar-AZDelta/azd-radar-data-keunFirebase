@@ -6,11 +6,11 @@ export default class CommonMapping {
   static athenaRow: IAthenaRow
   static usagiRow: IUsagiRow
   static usagiRowIndex: number
-  static action: string
+  static action: string | undefined
   static equivalence: string
   static custom: boolean
 
-  static async setVars({ athenaRow, usagiRow, usagiRowIndex }: IAthenaInfo, action: string, equivalence: string, custom: boolean) {
+  static async setVars({ athenaRow, usagiRow, usagiRowIndex }: IAthenaInfo, action: string | undefined, equivalence: string, custom: boolean) {
     this.athenaRow = athenaRow
     this.usagiRow = usagiRow
     this.usagiRowIndex = usagiRowIndex
@@ -36,8 +36,7 @@ export default class CommonMapping {
 
   private static async assembleExtraInfoSingleMapping(numberOfConcepts: number) {
     const user = await User.getUser()
-    const updatedProperties = {
-      mappingStatus: this.action,
+    const updatedProperties: Record<string, any> = {
       statusSetBy: user.name,
       statusSetOn: Date.now(),
       createdBy: user.name,
@@ -53,6 +52,7 @@ export default class CommonMapping {
       'ADD_INFO:approvedOn': null,
       'ADD_INFO:customConcept': this.custom,
     }
+    if (this.action) updatedProperties.mappingStatus = this.action
     return updatedProperties
   }
 }

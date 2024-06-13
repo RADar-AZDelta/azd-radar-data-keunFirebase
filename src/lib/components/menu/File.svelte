@@ -7,9 +7,10 @@
   import type { IFileTab } from '$lib/interfaces/Types'
   import Icon from '$lib/components/extra/Icon.svelte'
 
-  let { id, name, domain }: IFileTab = $props()
+  let { id, owner, name, domain, confirmFileDeletion }: IFileTab = $props()
 
   let userIsAdmin = $derived($userSessionStore.roles?.includes('admin'))
+  let userIsOwner = $derived($userSessionStore.uid === owner)
 
   async function openMappingTool() {
     logWhenDev('openMappingTool: Navigating to the mapping tool')
@@ -25,7 +26,7 @@
     return url
   }
 
-  const download = async () => await Database.downloadFiles(id)
+  const deleteFile = async () => await confirmFileDeletion(id, name)
 </script>
 
 <div class="file-card">
@@ -34,9 +35,9 @@
     <p class="file-name">{name}</p>
     <p class="file-domain">Domain: {domain ?? 'none'}</p>
   </button>
-  {#if userIsAdmin}
+  {#if userIsAdmin || userIsOwner}
     <div class="action-container">
-      <button class="download-file" onclick={download}><Icon id="download" /></button>
+      <button class="delete-file" onclick={deleteFile}><Icon id="x" /></button>
     </div>
   {/if}
 </div>
@@ -78,18 +79,18 @@
     gap: 1rem;
   }
 
-  .download-file {
+  .delete-file {
     border: none;
     background-color: inherit;
   }
 
-  .download-file:hover {
-    background-color: #80c3d8;
+  .delete-file:hover {
+    background-color: #ff7f7f;
   }
 
-  .download-file:focus {
+  .delete-file:focus {
     outline: none;
-    box-shadow: 0 0 0 2px #71bbd4;
-    background-color: #80c3d8;
+    box-shadow: 0 0 0 2px #e67f7f;
+    background-color: #ff7f7f;
   }
 </style>

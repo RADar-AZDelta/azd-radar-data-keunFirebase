@@ -10,7 +10,7 @@ export default class Mapping {
     await Table.updateTableRow(index, mappingInfo)
   }
 
-  static async mapRow(athenaInfo: IAthenaInfo, equivalence: string, action: string, custom: boolean = false) {
+  static async mapRow(athenaInfo: IAthenaInfo, equivalence: string, action: string | undefined, custom: boolean = false) {
     const mapToMultipleConcepts = await Settings.getMappingToMultiple()
     if (mapToMultipleConcepts) await MultipleMapping.multipleMapping(athenaInfo, action, equivalence, custom)
     else await SingleMapping.singleMapping(athenaInfo, action, equivalence, custom)

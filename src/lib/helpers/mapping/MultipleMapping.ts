@@ -7,7 +7,7 @@ import type Query from 'arquero/dist/types/query/query'
 import type { IAthenaInfo, IMappedRows, IQueryResult, IUsagiRow } from '$lib/interfaces/Types'
 
 export default class MultipleMapping extends CommonMapping {
-  static async multipleMapping(athenaInfo: IAthenaInfo, action: string, equivalence: string, custom: boolean = false) {
+  static async multipleMapping(athenaInfo: IAthenaInfo, action: string | undefined, equivalence: string, custom: boolean = false) {
     await this.setVars(athenaInfo, action, equivalence, custom)
     const alreadyMapped = await this.checkIfRowIsNotAlreadyMapped()
     if (alreadyMapped) return

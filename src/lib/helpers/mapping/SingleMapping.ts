@@ -4,7 +4,7 @@ import MappedConcepts from '$lib/helpers/general/MappedConcepts'
 import type { IAthenaInfo, IMappedRows } from '$lib/interfaces/Types'
 
 export default class SingleMapping extends CommonMapping {
-  static async singleMapping(athenaInfo: IAthenaInfo, action: string, equivalence: string, custom: boolean = false) {
+  static async singleMapping(athenaInfo: IAthenaInfo, action: string | undefined, equivalence: string, custom: boolean = false) {
     await this.setVars(athenaInfo, action, equivalence, custom)
     if (!this.usagiRow?.sourceCode || this.athenaRow?.id === undefined || this.athenaRow?.id === null) return
     await this.updateMappedConceptsBib()

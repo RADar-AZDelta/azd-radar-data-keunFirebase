@@ -22,7 +22,7 @@ export default class CustomValidation {
 
   private static async checkForEmptyProperties() {
     const empties: string[] = []
-    for (const [property, value] of Object.entries(this.input)) if (!value) empties.push(property)
+    for (const [property, value] of Object.entries(this.input)) if (!value && property !== 'id') empties.push(property)
     if (!empties.length) return
     this.error = true
     throw new Error(`The following properties can't be empty: ${empties}`)

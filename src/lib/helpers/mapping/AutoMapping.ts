@@ -18,20 +18,23 @@ export default class AutoMapping {
   static async autoMapPage(domain: string | null) {
     const autoMap = await Settings.getAutoMap()
     if (!autoMap) return
-    this.domain = domain
-    if (this.autoMappingPromise) this.autoMappingAbortController.abort()
-    this.autoMappingAbortController = new AbortController()
-    this.signal = this.autoMappingAbortController.signal
     this.disableTable()
+    await this.setDomainAndAbortController(domain)
     this.autoMappingPromise = this.autoMapPageRows().then(this.enableTable)
   }
 
   static async startAutoMappingRow(index: number, domain: string | null) {
+    await this.setDomainAndAbortController(domain)
+    this.autoMappingPromise = this.autoMapSingleRow(index)
+  }
+
+  private static async setDomainAndAbortController(domain: string | null) {
+    // Preset the domain if there is one selected on upload of the Usagi file
     this.domain = domain
+    // Prepare the automappingPromise and abortController for the mapping
     if (this.autoMappingPromise) this.autoMappingAbortController.abort()
     this.autoMappingAbortController = new AbortController()
     this.signal = this.autoMappingAbortController.signal
-    this.autoMappingPromise = this.autoMapSingleRow(index)
   }
 
   private static async autoMapPageRows() {
@@ -48,7 +51,11 @@ export default class AutoMapping {
     if (this.signal.aborted) return Promise.resolve()
     const row = concepts.queriedData[index]
     const rowIndex = concepts.indices[index]
-    if (row.conceptId || row.sourceAutoAssignedConceptIds || row.conceptName) return
+    // Don't automap if the row is already mapped or if the concept is flagged
+    const { conceptId, sourceAutoAssignedConceptIds, conceptName, mappingStatus } = row
+    const rowIsAlreadyMapped = conceptId || sourceAutoAssignedConceptIds || conceptName
+    const rowIsFlagged = mappingStatus === 'FLAGGED'
+    if (rowIsAlreadyMapped || rowIsFlagged) return
     await this.autoMapRow(row, rowIndex)
   }
 
@@ -72,7 +79,8 @@ export default class AutoMapping {
     const concepts = await this.fetchFirstConcept(filter)
     if (!concepts) return
     const athenaInfo: IAthenaInfo = { athenaRow: concepts[0], usagiRow: row, usagiRowIndex: index }
-    await Mapping.mapRow(athenaInfo, 'EQUAL', 'UNCHECKED')
+    // Don't change the mappingStatus when automapping
+    await Mapping.mapRow(athenaInfo, 'EQUAL', undefined)
   }
 
   private static async getTranslatedSourceName(sourceName: string) {
@@ -83,6 +91,7 @@ export default class AutoMapping {
 
   private static async fetchFirstConcept(filter: string): Promise<IAthenaRow[] | undefined> {
     let urlString = this.mappingUrl + `&page=1&pageSize=1&standardConcept=Standard&query=${filter}`
+    // If there was a domain set on upload of the usagi file, pass it to the API
     if (this.domain) urlString += `&domain=${this.domain}`
     const url = encodeURI(urlString)
     const conceptsResult = await fetch(url)
@@ -92,6 +101,7 @@ export default class AutoMapping {
   }
 
   static async abortAutoMap() {
+    // Abort the automapping and enable the table again
     if (this.autoMappingPromise) this.autoMappingAbortController.abort()
     const abortAutoMapping = createAbortAutoMapping()
     abortAutoMapping.update(false)

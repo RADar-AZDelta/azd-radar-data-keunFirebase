@@ -10,10 +10,6 @@ export interface IFileIdTemplate {
 
 export interface IFirestoreFile {
   name: string
-  custom: string
-  customId: string
-  flaggedId: string
-  flaggedName: string
   domain: string | null
 }
 
@@ -21,17 +17,11 @@ export interface IDatabaseFile {
   id: string
   name: string
   content: string
-  custom: string
-  customId: string
-  flaggedId: string
-  flagged: string
   domain: string | null
 }
 
 export interface IStorageMetadata {
   name: string
-  customId: string
-  flaggedId: string
   domain: string
   [key: string]: string
 }
@@ -240,7 +230,7 @@ export interface IMappedRows {
 }
 
 export interface IMappedRowsConcept {
-  [key: number | string]: string
+  [key: number | string]: string | undefined
 }
 
 export interface ICustomConceptInput {
@@ -301,8 +291,6 @@ export interface IFile {
   id: string
   name: string
   file?: File
-  customId: string
-  flaggedId: string
   content?: string
 }
 
@@ -379,39 +367,14 @@ export interface IExtraUsagiCols {
 
 export interface IFileInformation {
   id: string
+  owner: string
   name: string
-  customId: string
-  custom: string
   domain: string | null
 }
 
 export interface IFileIds {
   id: string
-  customId: string
-  flaggedId: string
 }
-
-export interface IDatabaseImpl {
-  getKeunFile(id: string): Promise<IFile | undefined>
-  getCustomKeunFile(id: string): Promise<IFile | undefined>
-  getFlaggedFile(id: string): Promise<IFile | undefined>
-  downloadFiles(id: string): Promise<void>
-  checkFileExistance(id: string): Promise<undefined | IFileIds>
-  checkForFileWithSameName(name: string): Promise<false | string>
-  getFilesList(): Promise<IFileInformation[]>
-  uploadKeunFile(file: File, domain: string | null): Promise<void>
-  editKeunFile(id: string, blob: Blob): Promise<void>
-  editFlaggedFile(id: string, blob: Blob): Promise<void>
-  editCustomKeunFile(id: string, blob: Blob): Promise<void>
-  deleteKeunFile(id: string): Promise<void>
-  getCustomConcepts(): Promise<any>
-  addCustomConcept(customConcept: ICustomConceptCompact): Promise<any>
-  updateCustomConcept(customConcept: ICustomConceptCompact, existingCustomConcept: ICustomConceptCompact): Promise<void>
-  checkIfCustomConceptAlreadyExists(conceptInput: ICustomConceptCompact): Promise<boolean>
-  checkForCustomConceptWithSameName(name: string): Promise<boolean>
-  reset(): Promise<IFileInformation[]>
-}
-
 export interface IAuthImpl {
   logIn(name?: string): Promise<void>
   logOut(): Promise<void>
@@ -425,8 +388,10 @@ export interface ISettingsImpl {
 
 export interface IFileTab {
   id: string
+  owner: string
   name: string
   domain: string | null
+  confirmFileDeletion: (id: string, name: string) => Promise<void>
 }
 
 export interface IIconProps {
@@ -450,6 +415,7 @@ export interface IFileInputDialogProps {
 
 export interface IFileMenuProps {
   files: IFileInformation[]
+  setProcessing: (processing: boolean) => Promise<void>
 }
 
 export interface IAutoCompleteInputProps {

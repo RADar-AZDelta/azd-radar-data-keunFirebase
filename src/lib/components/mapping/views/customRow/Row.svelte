@@ -48,7 +48,7 @@
 
 {#if usagiRow}
   {@const mappingStatus = mappedToConceptIds.value[usagiRow.sourceCode]?.[`custom-${renderedRow.concept_name}`]}
-  {@const color = Config.colors[mappingStatus]}
+  {@const color = Config.colors[mappingStatus ?? 'UNAPPROVED']}
   <td class="actions-cell">
     <div class="actions-grid">
       {#if mappingStatus === 'APPROVED'}

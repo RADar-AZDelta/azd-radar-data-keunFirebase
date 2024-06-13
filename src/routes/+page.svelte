@@ -122,6 +122,10 @@
     filteredFiles = files.filter(file => file.name.toLowerCase().includes(input.toLowerCase()))
   }, 300)
 
+  async function setProcessing(process: boolean) {
+    processing = process
+  }
+
   $effect(() => {
     if ($user) getFiles()
   })
@@ -153,7 +157,7 @@
           <button class="export" onclick={exportFiles}>Export</button>
         </div>
         <div class="file-list">
-          <FileMenu files={filteredFiles} />
+          <FileMenu files={filteredFiles} {setProcessing} />
         </div>
         {#if processing}
           <Spinner />

@@ -60,13 +60,7 @@ export default class Table {
   private static async getAllMappedConceptsToRow(sourceCode: string) {
     const params = { sourceCode, columnsAdded: this.columnsAdded }
     if (!this.columnsAdded) this.columnsAdded = await this.checkIfTableConceptsAreWithNewColumns()
-    // const conceptsQuery = (query().params(params) as Query)
-    //   .filter((r: any, p: any) => (r.sourceCode === p.sourceCode && p.columnsAdded ? r.conceptName : true))
-    //   .toObject()
-
     const conceptsQuery = (query().params(params) as Query).filter((r: any, p: any) => r.sourceCode === p.sourceCode && r.conceptName).toObject()
-
-    // const q = (query().params({ sourceCode: 'AD'}) as Query).filter((r: any, p: any) => r.sourceCode === p.sourceCode).toObject()
     const queryResult = await this.executeQueryOnTable(conceptsQuery)
     return queryResult
   }
@@ -105,6 +99,16 @@ export default class Table {
       .toObject()
     const flaggedConceptsResult = await this.executeQueryOnTable(flaggedConceptsQuery)
     return flaggedConceptsResult.queriedData
+  }
+
+  static async extractCustomConceptIds() {
+    const columnsWereAdded = await this.checkIfTableConceptsAreWithNewColumns()
+    if (!columnsWereAdded) return []
+    const customConceptsQuery = query()
+      .filter((r: any) => r['ADD_INFO:customConcept'])
+      .toObject()
+    const customConceptsResult = await this.executeQueryOnTable(customConceptsQuery)
+    return customConceptsResult.queriedData
   }
 
   static async prepareFile() {

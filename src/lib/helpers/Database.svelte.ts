@@ -1,8 +1,7 @@
-import { PUBLIC_CUSTOM_CONCEPT_ID_START } from '$env/static/public'
 import { FileHelper, logWhenDev } from '@radar-azdelta-int/radar-utils'
+import { userSessionStore, type UserSession } from '@radar-azdelta-int/radar-firebase-utils'
+import { PUBLIC_CUSTOM_CONCEPT_ID_START } from '$env/static/public'
 import { database, realtimeDatabase, storage } from '$lib/constants/firebase'
-import Config from '$lib/helpers/Config'
-import CustomTable from '$lib/helpers/tables/CustomTable'
 import Table from '$lib/helpers/tables/Table'
 import Mapping from '$lib/helpers/mapping/Mapping'
 import type { ICustomConceptCompact, IFile, IFirestoreFile, IStorageCustomMetadata, IStorageMetadata } from '$lib/interfaces/Types'
@@ -18,8 +17,6 @@ export default class Database {
   private static storageCollection: string = 'Keun-files'
   private static storageDeletedColl: string = 'Keun-deleted-files'
   private static firestoreFileColl: string = 'files'
-  private static storageCustomColl: string = 'Keun-custom-files'
-  private static storageFlaggedColl: string = 'Keun-flagged-files'
 
   static async checkIfCustomConceptAlreadyExists(row: ICustomConceptCompact) {
     const { concept_name, concept_class_id, domain_id, vocabulary_id } = row
@@ -51,20 +48,12 @@ export default class Database {
   }
 
   private static async findIdOfCustomConcept() {
-    const missingId = unfilteredCustomConcepts.indexOf(undefined)
-    if (missingId !== -1) {
-      let previousConceptId = unfilteredCustomConcepts[missingId - 1]?.concept_id
-      if (!previousConceptId) previousConceptId = Number(PUBLIC_CUSTOM_CONCEPT_ID_START) - customConcepts.length + 1
-      return { arrayId: missingId, id: previousConceptId - 1 }
-    }
-
-    const id = Number(PUBLIC_CUSTOM_CONCEPT_ID_START) - customConcepts.length
-    return { arrayId: customConcepts.length, id }
+    const id = Number(PUBLIC_CUSTOM_CONCEPT_ID_START) - unfilteredCustomConcepts.length
+    return { arrayId: unfilteredCustomConcepts.length, id }
   }
 
   static async updateCustomConcept(concept: ICustomConceptCompact, existingConcept: ICustomConceptCompact) {
     await this.updateCustomConceptInDatabase(concept, existingConcept)
-    await CustomTable.updateCustomTableRow(existingConcept, concept)
     const result = await Table.getAllMappedRowsToConcept(existingConcept.concept_name)
     for (let i = 0; i < result.queriedData.length; i++) {
       const usagiRow = result.queriedData[i]
@@ -110,11 +99,7 @@ export default class Database {
   static async checkFileExistance(id: string) {
     const existance = await this.storage.readFileStorage(`${this.storageCollection}/${id}`).catch(() => false)
     if (typeof existance === 'boolean') return
-    return {
-      id,
-      customId: existance.meta?.customMetadata?.customId ?? '',
-      flaggedId: existance.meta?.customMetadata?.flaggedId ?? '',
-    }
+    return id
   }
 
   static async checkForFileWithSameName(name: string) {
@@ -125,54 +110,49 @@ export default class Database {
     return file.id
   }
 
-  static async downloadFiles(id: string) {
+  static async downloadFiles(id: string, flaggedBlob: Blob | undefined, customBlob: Blob | undefined) {
     const file = await this.readFileFromCollection(id, this.storageCollection)
     if (!file || !file.file) return
+    await this.downloadFlaggedFile(file.name, flaggedBlob)
+    await this.downloadCustomFile(file.name, customBlob)
     if (!file.name.includes('_usagi.csv')) file.name = `${file.name.split('.')[0]}_usagi.csv`
     await FileHelper.downloadFile(file.file)
-    await this.downloadFlaggedFile(file.flaggedId)
-    await this.downloadCustomFile(file.customId)
   }
 
-  private static async downloadFlaggedFile(flaggedId: string) {
-    const flaggedFile = await this.readFileFromCollection(flaggedId, this.storageFlaggedColl)
-    if (!flaggedFile || !flaggedFile.file) return
-    const flaggedString = await FileHelper.blobToString(flaggedFile.file)
-    if (!flaggedString || flaggedString.includes(',,,,,,,,,,,,,,,,,,,,,,,')) return
-    await FileHelper.downloadFile(flaggedFile.file)
+  private static async downloadFlaggedFile(name: string, flaggedBlob: Blob | undefined) {
+    if (!flaggedBlob) return
+    const flaggedName = `${name.split('.')[0]}_flagged.csv`
+    const flaggedFile = await this.blobToFile(flaggedBlob, flaggedName)
+    await FileHelper.downloadFile(flaggedFile)
   }
 
-  private static async downloadCustomFile(customId: string) {
-    const customFile = await this.readFileFromCollection(customId, this.storageCustomColl)
-    if (!customFile || !customFile.file) return
-    const customString = await FileHelper.blobToString(customFile.file)
-    if (!customString || customString.includes(',,,,,,,,,')) return
-    await FileHelper.downloadFile(customFile.file)
+  private static async downloadCustomFile(name: string, customBlob: Blob | undefined) {
+    if (!customBlob) return
+    const customName = `${name.split('.')[0]}_concept.csv`
+    const customFile = await this.blobToFile(customBlob, customName)
+    await FileHelper.downloadFile(customFile)
   }
 
   private static async readFileFromCollection(id: string, collection: string): Promise<IFile | undefined> {
     const fileInfo = await this.storage.readFileStorage(`${collection}/${id}`)
     if (!fileInfo.file || !fileInfo.meta) return
     const name = fileInfo.meta.customMetadata?.name ?? fileInfo.meta.name
-    const customId = fileInfo.meta.customMetadata?.customId ?? ''
-    const flaggedId = fileInfo.meta.customMetadata?.flaggedId ?? ''
     const file = await this.blobToFile(fileInfo.file, name)
-    const fileObj: IFile = { id, name, file, customId, flaggedId }
+    const fileObj: IFile = { id, name, file }
     return fileObj
   }
 
   private static blobToFile = async (blob: Blob, name: string) => new File([blob], name, { type: 'text/csv' })
 
   static async deleteKeunFile(id: string) {
-    const ids = await this.retrieveFileIds(id)
     const fileSnapshot = await this.database.readFirestore(this.firestoreFileColl, id)
     if (!fileSnapshot || !fileSnapshot.data()) return
     const fileInfo = fileSnapshot.data()
     if (!fileInfo) return
-    const deleted = await this.softDeleteKeunFile(id)
-    if (!deleted) return
-    if (ids?.customId) await this.storage.deleteFileStorage(`${this.storageCustomColl}/${ids.customId}`)
-    if (ids?.flaggedId) await this.storage.deleteFileStorage(`${this.storageFlaggedColl}/${ids.flaggedId}`)
+    const user = await this.getUser()
+    const userIsOwnerOfFile = fileInfo.owner === user.uid
+    const userIsAdmin = user.roles?.includes('admin')
+    if (userIsAdmin || userIsOwnerOfFile) await this.softDeleteKeunFile(id)
   }
 
   private static async softDeleteKeunFile(id: string) {
@@ -186,61 +166,34 @@ export default class Database {
     return true
   }
 
-  private static async retrieveFileIds(id: string) {
-    const fileDocument = await this.database.readFirestore(this.firestoreFileColl, id)
-    if (!fileDocument) return
-    const fileInfo = fileDocument.data()
-    if (!fileInfo) return
-    return { customId: <string>fileInfo.customId, flaggedId: <string>fileInfo.flaggedId }
-  }
-
   static async uploadKeunFile(file: File, domain: string | null) {
     const fileId = crypto.randomUUID()
-    const customId = crypto.randomUUID()
-    const flaggedId = crypto.randomUUID()
     const fileNameHasUsagiSequal = file.name.endsWith('_usagi.csv')
     const fileName = !fileNameHasUsagiSequal ? `${file.name.split('.')[0]}_usagi.csv` : file.name
-    await this.uploadFile(fileId, fileName, file, customId, flaggedId, domain)
-    const customName = await this.uploadCustomFile(customId, file.name, flaggedId, domain)
-    const flaggedName = await this.uploadFlaggedFile(flaggedId, file.name, customId, domain)
-    const fileData = { name: fileName, customId, custom: customName, flaggedId, flaggedName, domain }
+    await this.uploadFile(fileId, fileName, file, domain)
+    const user = await this.getUser()
+    const fileData = { name: fileName, domain, owner: user.uid }
     await this.database.updateToFirestoreIfNotExist(this.firestoreFileColl, fileId, fileData)
   }
 
-  private static async uploadFile(id: string, name: string, file: File, customId: string, flaggedId: string, domain: string | null) {
+  private static async getUser(): Promise<UserSession> {
+    return new Promise(resolve => userSessionStore.subscribe(user => resolve(user)))
+  }
+
+  private static async uploadFile(id: string, name: string, file: File, domain: string | null) {
     const metaData: IStorageCustomMetadata = {
-      customMetadata: { name, customId, flaggedId, domain: domain! },
+      customMetadata: { name, domain: domain! },
     }
     await this.storage.uploadFileStorage(`${this.storageCollection}/${id}`, file, metaData)
-  }
-
-  private static async uploadCustomFile(id: string, name: string, flaggedId: string, domain: string | null) {
-    const customName = `${name.split('.')[0]}_concept.csv`
-    const customFile = await this.blobToFile(new Blob([Config.customBlobInitial]), customName)
-    const customMetaData: IStorageCustomMetadata = {
-      customMetadata: { name: customName, customId: id, flaggedId, domain: domain! },
-    }
-    await this.storage.uploadFileStorage(`${this.storageCustomColl}/${id}`, customFile, customMetaData)
-    return customName
-  }
-
-  private static async uploadFlaggedFile(id: string, name: string, customId: string, domain: string | null) {
-    const flaggedName = `${name.split('.')[0]}_flagged.csv`
-    const flaggedFile = await this.blobToFile(new Blob([Config.flaggedBlobInitial]), flaggedName)
-    const customMetaData: IStorageCustomMetadata = {
-      customMetadata: { name: flaggedName, customId, flaggedId: id, domain: domain! },
-    }
-    await this.storage.uploadFileStorage(`${this.storageFlaggedColl}/${id}`, flaggedFile, customMetaData)
-    return flaggedName
   }
 
   static async editKeunFile(id: string, blob: Blob) {
     const fileData = await this.getFileDataFromFirestore(id)
     if (!fileData) return
-    const { name, customId, flaggedId, domain } = fileData
+    const { name, domain } = fileData
     const file = await this.blobToFile(blob, name)
     const metaData: IStorageCustomMetadata = {
-      customMetadata: { name: file.name, customId, flaggedId, domain: domain! },
+      customMetadata: { name: file.name, domain: domain! },
     }
     await this.storage.uploadFileStorage(`${this.storageCollection}/${id}`, file, metaData)
   }
@@ -253,38 +206,16 @@ export default class Database {
     return fileData
   }
 
-  static async editCustomKeunFile(id: string, blob: Blob) {
-    const fileData = await this.getFileDataFromFirestore(id)
-    if (!fileData) return
-    const { custom: name, customId, flaggedId, domain } = fileData
-    const file = await this.blobToFile(blob, name)
-    const metaData: IStorageCustomMetadata = {
-      customMetadata: { name: file.name, customId, flaggedId, domain: domain! },
-    }
-    await this.storage.uploadFileStorage(`${this.storageCustomColl}/${customId}`, file, metaData)
-  }
-
-  static async editFlaggedFile(id: string, blob: Blob) {
-    const fileData = await this.getFileDataFromFirestore(id)
-    if (!fileData) return
-    const { flaggedId, flaggedName: name, customId, domain } = fileData
-    const file = await this.blobToFile(blob, name)
-    const metaData: IStorageCustomMetadata = { customMetadata: { name, customId, flaggedId, domain: domain! } }
-    await this.storage.uploadFileStorage(`${this.storageFlaggedColl}/${flaggedId}`, file, metaData)
-  }
-
   static async getFilesList() {
     const fileIds = await this.getFilesFromFirestore()
     const fileNames = []
     for (const fileId of fileIds) {
-      const fileInfo = await this.getFileNameFromStorage(fileId)
+      const fileInfo = await this.getFileNameFromStorage(fileId.id)
       if (fileInfo)
         fileNames.push({
-          id: fileId,
+          id: fileId.id,
+          owner: fileId.owner,
           name: fileInfo.fileName,
-          customId: fileInfo.customId,
-          custom: '',
-          flaggedId: fileInfo.flaggedId,
           domain: fileInfo.domain,
         })
     }
@@ -295,7 +226,7 @@ export default class Database {
     const fileIds = await this.getFilesFromFirestore()
     const files = []
     for (const fileId of fileIds) {
-      const file = await this.readFileFromCollection(fileId, this.storageCollection)
+      const file = await this.readFileFromCollection(fileId.id, this.storageCollection)
       if (file) files.push({ id: fileId, file: file.file, name: file.name })
     }
     return files
@@ -305,16 +236,16 @@ export default class Database {
     const fileInfo = await this.storage.readMetaData(`${this.storageCollection}/${id}`)
     if (!fileInfo || !fileInfo.customMetadata) return
     const fileName = (<IStorageMetadata>fileInfo.customMetadata).name
-    const customId = (<IStorageMetadata>fileInfo.customMetadata).customId
-    const flaggedId = (<IStorageMetadata>fileInfo.customMetadata).flaggedId
     const domain = (<IStorageMetadata>fileInfo.customMetadata).domain
-    return { fileName, customId, flaggedId, domain }
+    return { fileName, domain }
   }
 
   private static async getFilesFromFirestore() {
     const fileIds = await this.database.readFirestoreCollection(this.firestoreFileColl)
     if (!fileIds) return []
-    const files = fileIds.docs.map(file => file.id)
+    const files = fileIds.docs.map(file => {
+      return { id: file.id, owner: file.data().owner }
+    })
     return files
   }
 
@@ -322,28 +253,9 @@ export default class Database {
     return await this.readFileFromCollection(id, this.storageCollection)
   }
 
-  static async getCustomKeunFile(id: string) {
-    // console.log("ID ", id)
-    const custom = await this.readFileFromCollection(id, this.storageCustomColl)
-    if (!custom) return
-    const { file, name } = custom
-    if (!file) return
-    const originalJSON = await FileHelper.csvToJson(file)
-    if (originalJSON.length) return custom
-    const newFile =
-      'concept_id,concept_name,domain_id,vocabulary_id,concept_class_id,standard_concept,concept_code,valid_start_date,valid_end_date,invalid_reason\ntest,test,test,test,test,test,test,test,test,test'
-    const createdFile = await FileHelper.createFileFromString(newFile, name, 'text/csv')
-    custom.file = createdFile
-    return custom
-  }
-
-  static async getFlaggedFile(id: string) {
-    return await this.readFileFromCollection(id, this.storageFlaggedColl)
-  }
-
   static async reset() {
     const fileIds = await this.getFilesFromFirestore()
-    for (const id of fileIds) await this.deleteKeunFile(id)
+    for (const file of fileIds) await this.deleteKeunFile(file.id)
     return []
   }
 }

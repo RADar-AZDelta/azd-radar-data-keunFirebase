@@ -21,8 +21,8 @@ dependencies:
     specifier: ^0.0.44
     version: 0.0.44(@sveltejs/vite-plugin-svelte@3.1.0)(svelte@5.0.0-next.143)(vite@5.2.11)
   '@radar-azdelta/svelte-datatable':
-    specifier: ^0.0.86
-    version: 0.0.86(@sveltejs/vite-plugin-svelte@3.1.0)(svelte@5.0.0-next.143)(vite@5.2.11)
+    specifier: ^0.0.87
+    version: 0.0.87(@sveltejs/vite-plugin-svelte@3.1.0)(svelte@5.0.0-next.143)(vite@5.2.11)
   arquero:
     specifier: 5.2.0
     version: 5.2.0
@@ -981,8 +981,8 @@ packages:
       - vite
     dev: false
 
-  /@radar-azdelta/svelte-datatable@0.0.86(@sveltejs/vite-plugin-svelte@3.1.0)(svelte@5.0.0-next.143)(vite@5.2.11):
-    resolution: {integrity: sha512-D5ao7PoF00r4kjECcXsybm67J2tK7x/OIpjEfCYHoJwFYwIRPTC9JmX2k9U03HG8JizLSN2wgF3Obk2KHB588A==}
+  /@radar-azdelta/svelte-datatable@0.0.87(@sveltejs/vite-plugin-svelte@3.1.0)(svelte@5.0.0-next.143)(vite@5.2.11):
+    resolution: {integrity: sha512-Zh7rhSuJiMgEDwLjiCH/Dsz+UZO/f+nQgrGhFJsoL+keSjFwGJXx6AGX5oxHdrMFGpJlvKWtAg5TVrN3CNRyiA==}
     dependencies:
       '@sveltejs/kit': 2.5.8(@sveltejs/vite-plugin-svelte@3.1.0)(svelte@5.0.0-next.143)(vite@5.2.11)
       arquero: 5.4.0

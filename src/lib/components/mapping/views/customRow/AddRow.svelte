@@ -58,7 +58,7 @@
         <div style="width: {column.width ? `${column.width - 32}px` : 'auto'}">
           <Autocomplete bind:input={inputRow[column.id]} {id} {list} update={autoCompleteRow} />
         </div>
-      {:else if column.id === "concept_id"}
+      {:else if column.id === 'concept_id'}
         <p></p>
       {:else}
         <input style="width: {column.width ? `${column.width - 32}px` : 'auto'}" bind:value={inputRow[column.id]} />

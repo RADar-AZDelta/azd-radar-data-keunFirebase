@@ -12,7 +12,7 @@
     {
       id: 'concept_id',
       label: 'Id',
-      width: 100
+      width: 100,
     },
     {
       id: 'concept_name',
@@ -25,12 +25,12 @@
     {
       id: 'domain_id',
       label: 'domain',
-      width: 175
+      width: 175,
     },
     {
       id: 'vocabulary_id',
       label: 'vocabulary',
-      width: 100
+      width: 100,
     },
   ]
 
