@@ -32,7 +32,7 @@ service firebase.storage {
       }
 
 			// The user must be logged in through Microsoft, has the role "user" || "admin"
-      allow read, create, update: if isSignedIn() && (checkRole('user') || checkRole('admin')) && checkProvider();
+			allow read, create, update: if isSignedIn() && checkProvider() && (checkRole('user') || checkRole('admin'));
 			// The user must be logged in through Microsoft & has the role "admin" or has the role "user" and is owner of the file
       allow delete: if isSignedIn() && ((checkRole('user') && isOwnerOfFile()) || checkRole('admin')) && checkProvider();
     }

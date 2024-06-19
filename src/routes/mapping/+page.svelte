@@ -43,7 +43,7 @@
     globalAthenaFilter.filter = await translate(selectedRow.sourceName)
   }
 
-  async function updateCurrentVisibleRows(currentPage: number, rowsPerPage: number) {
+  async function updateCurrentVisibleRows() {
     currentVisibleRows.clear()
   }
 
@@ -99,6 +99,7 @@
   }
 
   async function load() {
+    await reset()
     if (filesLoaded) return
     const urlId = $page.url.searchParams.get('id')
     if (!urlId) return goto(`${base}/`)
@@ -106,6 +107,12 @@
     selectedFileId = urlId
     await readFile()
     filesLoaded = true
+  }
+
+  async function reset() {
+    selectedRow = undefined
+    selectedRowIndex = 0
+    await updateCurrentVisibleRows()
   }
 
   async function syncFile() {
