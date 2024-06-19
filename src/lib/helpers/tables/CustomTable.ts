@@ -1,4 +1,3 @@
-import { reformatDate } from '@radar-azdelta-int/radar-utils'
 import Table from '$lib/helpers/tables/Table'
 import type DataTable from '@radar-azdelta/svelte-datatable'
 import type { ICustomConceptInput, IUsagiRow } from '$lib/interfaces/Types'
@@ -33,8 +32,8 @@ export default class CustomTable {
         domain_id: c.domainId ?? 'Observation',
         vocabulary_id: c.vocabularyId ?? 'AZDELTA',
         standard_concept: '',
-        valid_start_date: reformatDate(),
-        valid_end_date: '2099-12-31',
+        valid_start_date: Number(new Date()),
+        valid_end_date: Number(new Date('2099-12-31')),
         invalid_reason: '',
       }
     })

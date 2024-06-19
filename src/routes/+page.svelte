@@ -94,7 +94,8 @@
   async function createVocabCSV() {
     const json = await Database.fetchCustomConceptsDirectly()
     if (!json.length) return
-    const concepts = await transformConceptsToCSVFormat(json)
+    const filteredJson = json.filter(c => c)
+    const concepts = await transformConceptsToCSVFormat(filteredJson)
     const file = await FileHelper.jsonToCsv(concepts, 'customVocabulary.csv')
     return file
   }

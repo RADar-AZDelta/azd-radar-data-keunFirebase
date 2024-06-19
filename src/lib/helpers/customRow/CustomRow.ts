@@ -37,8 +37,8 @@ export default class CustomRow {
       conceptClassId: concept_class_id,
       standardConcept: '',
       conceptCode: this.usagiRow.sourceName,
-      validStartDate: reformatDate(),
-      validEndDate: '2099-12-31',
+      validStartDate: Number(new Date()),
+      validEndDate: Number(new Date('2099-12-31')),
       invalidReason: '',
     }
     return concept
