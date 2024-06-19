@@ -93,7 +93,7 @@
 
   async function createVocabCSV() {
     const json = await Database.fetchCustomConceptsDirectly()
-    if (!json || !json[0]) return
+    if (!json.length) return
     const concepts = await transformConceptsToCSVFormat(json)
     const file = await FileHelper.jsonToCsv(concepts, 'customVocabulary.csv')
     return file
