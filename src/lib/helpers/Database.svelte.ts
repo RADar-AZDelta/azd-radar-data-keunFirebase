@@ -113,22 +113,25 @@ export default class Database {
   static async downloadFiles(id: string, flaggedBlob: Blob | undefined, customBlob: Blob | undefined) {
     const file = await this.readFileFromCollection(id, this.storageCollection)
     if (!file || !file.file) return
+    if (!file.name.includes('_usagi.csv')) {
+      const hasSequel = file.name.includes('_usagi.csv')
+      file.name = `${hasSequel ? file.name.split('_usagi.csv')[0] : file.name.split('.csv')}_usagi.csv`
+    }
+    await FileHelper.downloadFile(file.file)
     await this.downloadFlaggedFile(file.name, flaggedBlob)
     await this.downloadCustomFile(file.name, customBlob)
-    if (!file.name.includes('_usagi.csv')) file.name = `${file.name.split('.')[0]}_usagi.csv`
-    await FileHelper.downloadFile(file.file)
   }
 
   private static async downloadFlaggedFile(name: string, flaggedBlob: Blob | undefined) {
     if (!flaggedBlob) return
-    const flaggedName = `${name.split('.')[0]}_flagged.csv`
+    const flaggedName = `${name.split('_usagi.csv')[0]}_flagged.csv`
     const flaggedFile = await this.blobToFile(flaggedBlob, flaggedName)
     await FileHelper.downloadFile(flaggedFile)
   }
 
   private static async downloadCustomFile(name: string, customBlob: Blob | undefined) {
     if (!customBlob) return
-    const customName = `${name.split('.')[0]}_concept.csv`
+    const customName = `${name.split('_usagi.csv')[0]}_concept.csv`
     const customFile = await this.blobToFile(customBlob, customName)
     await FileHelper.downloadFile(customFile)
   }
