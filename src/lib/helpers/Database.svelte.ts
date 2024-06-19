@@ -136,7 +136,7 @@ export default class Database {
   private static async readFileFromCollection(id: string, collection: string): Promise<IFile | undefined> {
     const fileInfo = await this.storage
       .readFileStorage(`${collection}/${id}`)
-      .catch(e => console.error('An issue occured while reading a file from the storage with id ', id, '\n', e))
+      .catch(e => logWhenDev(`An issue occured while reading a file from the storage with id ${id}\n${e}`))
     if (!fileInfo || !fileInfo.file || !fileInfo.meta) return
     const name = fileInfo.meta.customMetadata?.name ?? fileInfo.meta.name
     const file = await this.blobToFile(fileInfo.file, name)
@@ -160,7 +160,7 @@ export default class Database {
   private static async softDeleteKeunFile(id: string) {
     const fileInfo = await this.storage
       .readFileStorage(`${this.storageCollection}/${id}`)
-      .catch(e => console.error('An issue occured while trying to read a file from the storage for deletion with id ', id, '\n', e))
+      .catch(e => logWhenDev(`An issue occured while trying to read a file from the storage for deletion with id ${id}\n${e}`))
     if (!fileInfo || !fileInfo.file || !fileInfo.meta) return
     const { file: blob, meta } = fileInfo
     const file = new File([blob], meta.customMetadata?.name ?? meta.name, { type: 'text/csv' })
@@ -188,7 +188,9 @@ export default class Database {
     const metaData: IStorageCustomMetadata = {
       customMetadata: { name, domain: domain! },
     }
-    await this.storage.uploadFileStorage(`${this.storageCollection}/${id}`, file, metaData).catch(e => console.error("An error occured while uploading a file to storage with id", id, "\n", e, " AND ", e.result))
+    await this.storage
+      .uploadFileStorage(`${this.storageCollection}/${id}`, file, metaData)
+      .catch(e => logWhenDev(`An error occured while uploading a file to storage with id ${id}\n${e}`))
   }
 
   static async editKeunFile(id: string, blob: Blob) {
@@ -239,7 +241,7 @@ export default class Database {
   private static async getFileNameFromStorage(id: string) {
     const fileInfo = await this.storage
       .readMetaData(`${this.storageCollection}/${id}`)
-      .catch(e => console.error('An issue occured while reading the metadata for the file with id ', id, '\n', e))
+      .catch(e => logWhenDev(`An issue occured while reading the metadata for the file with id ${id}\n${e}`))
     if (!fileInfo || !fileInfo.customMetadata) return
     const fileName = (<IStorageMetadata>fileInfo.customMetadata).name
     const domain = (<IStorageMetadata>fileInfo.customMetadata).domain

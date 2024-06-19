@@ -13,7 +13,7 @@
   const closeDialog = () => dialog.close()
 
   async function fileUploadWithColumnChanges(): Promise<void> {
-    if (!$user) return console.error('fileUploadWithColumnChanges: There is no author name set.')
+    if (!$user) return logWhenDev('fileUploadWithColumnChanges: There is no author name set.')
     if (!file) return
     await Reader.readFileAsText(file)
     await processUpdatedColumns(Reader.content)
