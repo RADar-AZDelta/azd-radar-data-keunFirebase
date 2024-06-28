@@ -37,7 +37,6 @@
       "name": "Vocab",
       "exclude": true,
       "options": [
-        "ABMS",
         "AMT",
         "ABC",
         "BDPM",
@@ -50,7 +49,6 @@
         "KNHIS",
         "Korean Revenu Code",
         "MDC",
-        "Medicare Specialty",
         "NDC",
         "Nebraska Lexicon",
         "OPCS4",
