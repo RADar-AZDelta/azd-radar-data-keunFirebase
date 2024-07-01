@@ -1,11 +1,15 @@
 {
   "customTableOptions": {
     "id": "customConceptsTable",
-    "saveOptions": false
+    "saveOptions": false,
+    "rowsPerPage": 1000,
+    "rowsPerPageOptions": [1000]
   },
   "flaggedTableOptions": {
     "id": "flaggedConceptsTable",
-    "saveOptions": false
+    "saveOptions": false,
+    "rowsPerPage": 1000,
+    "rowsPerPageOptions": [1000]
   },
   "tableOptions": {
     "rowsPerPage": 15,
