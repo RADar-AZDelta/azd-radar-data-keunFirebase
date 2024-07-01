@@ -10,6 +10,8 @@
   import { userSessionStore as user } from '@radar-azdelta-int/radar-firebase-utils'
   import { createSettings } from '$lib/stores/runes.svelte'
 
+  let { children } = $props()
+
   let settings = createSettings()
 
   async function retrieveSettings() {
@@ -30,16 +32,14 @@
         <li><a href="{base}/">File selection</a></li>
       {/if}
     </ul>
-    {#if $page.url.pathname.substring($page.url.pathname.lastIndexOf('/')) !== 'registration'}
-      <div class="header-buttons-container" id="settings">
-        {#if settings.value}
-          <Settings />
-          <User />
-        {/if}
-      </div>
-    {/if}
+    <div class="header-buttons-container" id="settings">
+      {#if settings.value}
+        <Settings />
+        <User />
+      {/if}
+    </div>
   </header>
-  <slot />
+  {@render children()}
 </main>
 
 <style>

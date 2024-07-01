@@ -241,8 +241,8 @@ export interface ICustomConceptInput {
   domain_id: string
   vocabulary_id: string
   standard_concept: string
-  valid_start_date: number
-  valid_end_date: number
+  valid_start_date: string
+  valid_end_date: string
   invalid_reason: string
 }
 
