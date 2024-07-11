@@ -105,9 +105,10 @@ export default class Table {
     const columnsWereAdded = await this.checkIfTableConceptsAreWithNewColumns()
     if (!columnsWereAdded) return []
     const customConceptsQuery = query()
-      .filter((r: any) => r['ADD_INFO:customConcept'])
+      .filter((r: any) => r['ADD_INFO:customConcept'] || (r.conceptId === null && r.mappingStatus !== 'UNCHECKED') || r.conceptId > 1900000000)
       .toObject()
     const customConceptsResult = await this.executeQueryOnTable(customConceptsQuery)
+    console.log('CONCEPTS ', customConceptsResult.queriedData)
     return customConceptsResult.queriedData
   }
 
