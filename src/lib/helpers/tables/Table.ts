@@ -105,7 +105,7 @@ export default class Table {
     const columnsWereAdded = await this.checkIfTableConceptsAreWithNewColumns()
     if (!columnsWereAdded) return []
     const customConceptsQuery = query()
-      .filter((r: any) => r['ADD_INFO:customConcept'] || (r.conceptId === null && r.mappingStatus !== 'UNCHECKED') || r.conceptId > 1900000000)
+      .filter((r: any) => r['ADD_INFO:customConcept'] || (r.conceptId === null && r.mappingStatus !== 'UNCHECKED' && r.vocabularyId === "AZDELTA") || (r.conceptId > 1900000000 && r.vocabularyId === "AZDELTA"))
       .toObject()
     const customConceptsResult = await this.executeQueryOnTable(customConceptsQuery)
     return customConceptsResult.queriedData
